@@ -30,25 +30,25 @@ function getAllPropNames (obj, array) {
       })
     } else
     // or if the schema is of type array and contains an 'items' property, the tag can be declared as mandatory
-    if (obj.items != null) {
-      array.push('items')
-    } else {
-      if (obj.allOf != null) {
-        obj.allOf.forEach(sub => {
-          getAllPropNames(sub, array)
-        })
+      if (obj.items != null) {
+        array.push('items')
+      } else {
+        if (obj.allOf != null) {
+          obj.allOf.forEach(sub => {
+            getAllPropNames(sub, array)
+          })
+        }
+        if (obj.anyOf != null) {
+          obj.anyOf.forEach(sub => {
+            getAllPropNames(sub, array)
+          })
+        }
+        if (obj.oneOf != null) {
+          obj.oneOf.forEach(sub => {
+            getAllPropNames(sub, array)
+          })
+        }
       }
-      if (obj.anyOf != null) {
-        obj.anyOf.forEach(sub => {
-          getAllPropNames(sub, array)
-        })
-      }
-      if (obj.oneOf != null) {
-        obj.oneOf.forEach(sub => {
-          getAllPropNames(sub, array)
-        })
-      }
-    }
     return array
   }
 }
