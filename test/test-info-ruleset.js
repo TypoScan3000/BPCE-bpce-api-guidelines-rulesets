@@ -24,13 +24,16 @@ describe('info', function () {
 
     it('should return no error if info is defined', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {}
       }
       await this.linterTester.runAndCheckNoError(document)
     })
 
     it('should return an error if info is not defined', async function () {
-      const document = {}
+      const document = {
+        openapi: '3.0.3'
+      }
       const errorPaths = []
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
@@ -42,6 +45,7 @@ describe('info', function () {
 
     it('should return no error if API name is defined in info', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           title: 'some API name'
         }
@@ -51,9 +55,92 @@ describe('info', function () {
 
     it('should return an error if no API name is not defined in info', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {}
       }
       const errorPaths = ['info']
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('info-version', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if the version tag is SemVer compliant', async function () {
+      const document = {
+        openapi: '3.0.3',
+        info: {
+          version: '1.3.0'
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if the version tag is not SemVer compliant', async function () {
+      const document = {
+        openapi: '3.0.3',
+        info: {
+          version: '1.3'
+        }
+      }
+      const errorPaths = ['info', 'version']
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('info-contact', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if contact structure is defined', async function () {
+      const document = {
+        openapi: '3.0.3',
+        info: {
+          contact: {}
+
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if no contact structure is defined in info', async function () {
+      const document = {
+        openapi: '3.0.3',
+        info: {}
+      }
+      const errorPaths = ['info']
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('contact-properties', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if the contact structure is present and contains name url email', async function () {
+      const document = {
+        openapi: '3.0.3',
+        info: {
+          contact: {
+            name: 'something',
+            url: 'http://adopt-an-api.com/',
+            email: 'inyourdreams@apis.com'
+          }
+
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if the contact structure is empty in info', async function () {
+      const document = {
+        openapi: '3.0.3',
+        info: {
+          contact: {}
+        }
+      }
+      const errorPaths = ['info', 'contact']
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })
@@ -64,6 +151,7 @@ describe('info', function () {
 
     it('should return no error if the API name does not contain api', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           title: 'some name'
         }
@@ -73,6 +161,7 @@ describe('info', function () {
 
     it('should return an error if the API name contains API', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           title: 'Some API name'
         }
@@ -85,6 +174,7 @@ describe('info', function () {
 
     it('should return an error if the API name contains Api', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           title: 'Some Api name'
         }
@@ -96,6 +186,7 @@ describe('info', function () {
 
     it('should return an error if the API name is API', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           title: 'API'
         }
@@ -111,6 +202,7 @@ describe('info', function () {
 
     it('should return no error if API description is provided', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           description: 'some description'
         }
@@ -120,6 +212,7 @@ describe('info', function () {
 
     it('should return an error if the API description is not provided', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {}
       }
       const errorPaths = ['info']
@@ -129,6 +222,7 @@ describe('info', function () {
 
     it('should return an error if the API description is empty', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           description: ''
         }
@@ -144,6 +238,7 @@ describe('info', function () {
 
     it('should return an error if the API description starts with "this API"', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           description: 'this API allows to do something'
         }
@@ -155,6 +250,7 @@ describe('info', function () {
 
     it('should return an error if the API description starts with "cette API"', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           description: 'Cette API permet de faire des choses'
         }
@@ -166,6 +262,7 @@ describe('info', function () {
 
     it('should return an error if the API description starts contains "web service"', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           description: 'Some description talking about web services and a few other things'
         }
@@ -177,6 +274,7 @@ describe('info', function () {
 
     it('should return an error if the API description starts contains "API"', async function () {
       const document = {
+        openapi: '3.0.3',
         info: {
           description: 'Some description talking about API and a few other things'
         }

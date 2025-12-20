@@ -16,6 +16,11 @@
 
 const linterTestSuite = require('./common/linter-test-suite.js')
 
-describe('main-studio', function () {
+/**
+ * There is no need to repeat all the tests that are already performed one level
+ * below with all the included files - what is important however is that the main-businessapi-release file
+ * remains a consolidating file, without any actual rule declaration : just some extends and overrides, nothing else.
+ */
+describe('main-universal', function () {
   linterTestSuite.initialize()
 })

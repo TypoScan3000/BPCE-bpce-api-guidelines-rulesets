@@ -1,0 +1,200 @@
+#
+# Copyright 2019-2022 Groupe BPCE
+#
+# Licensed under the Apache License, Version 2.0 (the License);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an AS IS BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+formats: [oas3]
+
+aliases:
+  OAuth2Schemes:
+    - $.components.securitySchemes[?(@.type==='oauth2')]
+
+#
+# The rules contained in this file are strictly limited to publicly exposed "Business APIs"
+# for which there are certain naming conventions, for the public server URL and its variables,
+# for security schemes and the golden source status of the contract to define an Apigee proxy.
+# Note that the rules are defined as OAS3 only, since OAS2 does not support features such as
+# multiple server URLs and templating.
+
+rules:
+  # We apply the rule below to servers ONLY when the x-private tag is not set.
+  # This is because we produce two forks, from the same master contract, where
+  # one is to be public on Apigee and one is strictly internal for server-to-server
+  # communications between Apigee and the service backends.
+  public-basepath-pattern-oas3:
+    recommended: true
+    description: Public Base path pattern must be compatible with `https://api{environment}groupebpce.com/{domain}/{brand}`.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-07-09
+      justification: "The public URL of a business API is exposed to the public and should follow a recognizable pattern across all group APIs."
+      tags:
+        - basepath
+        - versioning
+    given: $.servers.[?(@ && !@['x-internal'])].url
+    then:
+      function: pattern
+      functionOptions:
+        match: "^https:\/\/api({environment}|.|.sandbox.)groupebpce.com\/{domain}({brand})?([a-zA-Z0-9\/]+)$"
+
+  public-security-types-authorized-oas3:
+    recommended: true
+    description: Only apiKey and oauth security definitions are allowed on public APIs
+    severity: error
+    extensions:
+      since: 2024-07-09
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
+    given:
+      - $.securityDefinitions.*
+      - $.components.securitySchemes[?(@ && !@['x-internal'])]
+    then:
+      field: type
+      function: enumeration
+      functionOptions:
+        values:
+          - apiKey
+          - oauth2
+
+  public-private-security-types-authorized-oas3:
+    recommended: true
+    description: The private section of a Business API must declare HTTP BearerFormat JWT security
+    severity: error
+    extensions:
+      since: 2024-07-09
+      justification: "The private view of a business API is not for general consumption, it is reserved for server-to-server communications and is only accessible to the public gateway."
+      tags:
+        - security
+    given:
+      - $.securityDefinitions.*
+      - $.components.securitySchemes[?(@ && @['x-internal'])]
+    then:
+      field: type
+      function: enumeration
+      functionOptions:
+        values:
+          - http
+
+  public-security-no-api-level-oas3:
+    recommended: true
+    description: Public API global security is forbidden - it must be configured at operation level
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "All Public APIS must be properly secured at the operation level. The internal leg of an API, which is only exposed to the gateway can define JWT Grant globally."
+      tags:
+        - security
+    # Fetch the name of the global security defined
+    given: $.security[*].*~
+    then:
+      # Then look it up in the securitySchemes - there must be an x-internal tag set
+      field: $.components.securitySchemes[?(@['x-internal'] == true)]
+      function: defined
+
+  public-security-scope-naming-convention-oas3:
+    recommended: true
+    description: "Security scope must follow the standard lowerCamelCase pattern <apiName>.(ressource>)?(.<subressource>)?:PERMISSION"
+    severity: error
+    extensions:
+      since: 2024-07-25
+      justification: "Public API scopes follow a well-defined pattern to clearly structure the level at which a scope protection applies and the access right that is granted."
+      tags:
+        - security
+    given:
+      - "#OAuth2Schemes.flows.*.scopes.*~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^([a-z]+([A-Z]{1}[a-z0-9]+)*)(([a-z]+([A-Z]{1}[a-z]+)*).)*:(READ|WRITE|MANAGE|DELETE)$"
+
+  public-security-schemes-naming-convention-oas3:
+    recommended: true
+    description: "Security scheme name should start with 'oauth2' to avoid confusion between multiple declared schemes."
+    severity: warn
+    extensions:
+      since: 2024-07-25
+      justification: "Security Schemes names should include type and flow to visually distinguish them and avoid configuration errors."
+      tags:
+        - security
+    given:
+      - "#OAuth2Schemes~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^oauth2"
+
+  public-security-schemes-must-not-end-with-scopes-oas3:
+    recommended: true
+    description: "Security scheme name should not end with 'scopes' as it is confusing."
+    severity: warn
+    extensions:
+      since: 2024-07-25
+      justification: "Security scheme name should not end with 'scopes' as it is confusing: a Security scheme is not a list of scopes."
+      tags:
+        - security
+    given:
+      - "#OAuth2Schemes~"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "(S|s)copes?$"
+
+  public-security-invalid-delete-permission-oas3:
+    recommended: true
+    description: "DELETE operations require at least a MANAGE or DELETE permission level"
+    severity: error
+    extensions:
+      since: 2024-07-25
+      justification: "DELETE operations are sensitive and can only be granted for scopes that have an appropriate level."
+      tags:
+        - security
+    given:
+      - $.paths.*.delete.security.*.*.*
+    then:
+      function: pattern
+      functionOptions:
+        match: "(MANAGE|DELETE)$"
+
+  public-security-invalid-put-patch-permission-oas3:
+    recommended: true
+    description: "PUT or PATCH operations cannot be granted to a READ permission level"
+    severity: error
+    extensions:
+      since: 2024-07-25
+      justification: "PUT or PATCH operations are not compatible with a basic READ permission level."
+      tags:
+        - security
+    given:
+      - $.paths.*.[put,patch].security.*.*.*
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "READ$"
+
+  public-security-invalid-post-permission-oas3:
+    recommended: true
+    description: "POST operations which are not performing a search cannot be granted to a READ permission level"
+    severity: error
+    extensions:
+      since: 2024-07-25
+      justification: "POST operations are not compatible with a basic READ permission level. This is a configuration error."
+      tags:
+        - security
+    given:
+      - $.paths[?(!/search$/i.test(@property))].post.security.*.*.*
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "READ$"

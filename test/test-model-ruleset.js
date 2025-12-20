@@ -22,6 +22,7 @@ describe('model', function () {
   function checkSchemasDefinitionsFound () {
     it('should check oas2 definitions', function () {
       const document = {
+        swagger: '2.0',
         definitions: {}
       }
       const expectedPaths = [
@@ -33,6 +34,7 @@ describe('model', function () {
 
     it('should check oas3 components.schemas', function () {
       const document = {
+        openapi: '3.0.3',
         components: {
           schemas: {}
         }
@@ -48,6 +50,7 @@ describe('model', function () {
   function checkPropertiesFound () {
     it('should check oas2 definitions properties', function () {
       const document = {
+        swagger: '2.0',
         definitions: {
           SomeDefinition: {
             properties: {}
@@ -63,6 +66,7 @@ describe('model', function () {
 
     it('should check oas3 components.schemas properties', function () {
       const document = {
+        openapi: '3.0.3',
         components: {
           schemas: {
             SomeDefinition: {
@@ -80,6 +84,7 @@ describe('model', function () {
 
     it('should check inner properties', function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeDefinition: {
             properties: {
@@ -106,6 +111,7 @@ describe('model', function () {
 
     it('should return no error if schema name is UpperCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {}
         }
@@ -115,6 +121,7 @@ describe('model', function () {
 
     it('should return an error if schema name is not UpperCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           someSchema: {},
           SOmeSchema: {},
@@ -142,6 +149,7 @@ describe('model', function () {
 
     it('should return no error if schema name contains no number', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {}
         }
@@ -151,6 +159,7 @@ describe('model', function () {
 
     it('should return an error if schema name contains a number', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {}, // no error
           Some1Schema: {}, // error
@@ -173,6 +182,7 @@ describe('model', function () {
 
     it('should return no error if model name contains no technical suffix or prefix', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {}
         }
@@ -182,6 +192,7 @@ describe('model', function () {
 
     it('should return an error if model name contains technical suffix or prefix', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchemaDto: {},
           SomeSchemaDTO: {},
@@ -202,6 +213,36 @@ describe('model', function () {
     })
   })
 
+  describe('schema-no-type-declaration', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if schema contains a type', async function () {
+      const document = {
+        openapi: '3.0.3',
+        definitions: {
+          SomeSchema: {
+            type: 'object'
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if schema has no type', async function () {
+      const document = {
+        openapi: '3.0.3',
+        definitions: {
+          someSchema: {}
+        }
+      }
+      const errorPaths = [
+        ['definitions', 'someSchema']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
   describe('property-name-lowercamelcase', function () {
     linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
 
@@ -209,6 +250,7 @@ describe('model', function () {
 
     it('should return no error if property name is lowerCamelCased or is _links', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
             properties: {
@@ -234,6 +276,7 @@ describe('model', function () {
 
     it('should return an error if property name is not lowerCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
             properties: {
@@ -268,6 +311,7 @@ describe('model', function () {
 
     it('should return no error if property name contains no number', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
             properties: {
@@ -293,6 +337,7 @@ describe('model', function () {
 
     it('should return an error if property name contains a number', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
             properties: {
@@ -321,6 +366,7 @@ describe('model', function () {
 
     it('should return test', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeDefinition: {
             properties: {
@@ -341,6 +387,68 @@ describe('model', function () {
     })
   })
 
+  describe('property-bad-ref', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if property is a $ref', async function () {
+      const document = {
+        openapi: '3.0.3',
+        definitions: {
+          SomeSchema: {
+            properties: {
+              someProperty: {
+                $ref: '#/definitions/AnotherSchema'
+              },
+              _links: {}
+            }
+          },
+          AnotherSchema: {
+            properties: {
+              someProperty: {
+                type: 'object',
+                properties: {
+                  anotherProperty: {},
+                  _links: {}
+                }
+              }
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if property has a ref definition', async function () {
+      const document = {
+        openapi: '3.0.3',
+        definitions: {
+          SomeSchema: {
+            properties: {
+              someProperty: {
+                ref: '#/definitions/AnotherSchema'
+              }
+            }
+          },
+          AnotherSchema: {
+            properties: {
+              someProperty: {
+                type: 'object',
+                properties: {
+                  anotherProperty: {}
+                }
+              }
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['definitions', 'SomeSchema', 'properties', 'someProperty', 'ref']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
   describe('property-name-no-technical-prefix-suffix', function () {
     linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
 
@@ -348,6 +456,7 @@ describe('model', function () {
 
     it('should return no error if property name contains no technical suffix or prefix', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
             properties: {
@@ -373,6 +482,7 @@ describe('model', function () {
 
     it('should return an error if property name technical suffix or prefix', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
             properties: {
@@ -405,8 +515,11 @@ describe('model', function () {
 
     it('should check oas2 definitions', function () {
       const document = {
+        swagger: '2.0',
         definitions: {
-          SomeDefinition: {}
+          SomeDefinition: {
+            type: 'object'
+          }
         }
       }
       const expectedPaths = [
@@ -418,9 +531,12 @@ describe('model', function () {
 
     it('should check oas3 components.schemas', function () {
       const document = {
+        openapi: '3.0.3',
         components: {
           schemas: {
-            SomeDefinition: {}
+            SomeDefinition: {
+              type: 'object'
+            }
           }
         }
       }
@@ -431,13 +547,27 @@ describe('model', function () {
       this.linterTester.checkGivenFound(document, expectedPaths, givenIndex)
     })
 
-    it('should return no error if model has required properties', async function () {
+    it('should return no error if model has required properties, is of type string or array', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           SomeSchema: {
+            type: 'object',
             required: [
               'someRequiredProperty'
             ]
+          },
+          SomeOtherSchema: {
+            type: 'object',
+            allOf: [
+
+            ]
+          },
+          SomeArray: {
+            type: 'array'
+          },
+          SomeElementaryType: {
+            type: 'string'
           }
         }
       }
@@ -446,9 +576,13 @@ describe('model', function () {
 
     it('should return an info if model has empty required or no required', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
-          SchemaWithoutRequired: {},
+          SchemaWithoutRequired: {
+            type: 'object'
+          },
           SchemaWithEmptyRequired: {
+            type: 'object',
             required: []
           }
         }
@@ -458,6 +592,243 @@ describe('model', function () {
         ['definitions', 'SchemaWithEmptyRequired', 'required']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.info
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('model-integrity-bad-required-attribute', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should not complain if no required tag is found', async function () {
+      const document = {
+        openapi: '3.0.3',
+        definitions: {
+          SomeSchema: {
+            type: 'object'
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should not complain if a required tag can be found amongst the properties of an object or an array', async function () {
+      const document = {
+        openapi: '3.0.3',
+        components: {
+          schemas: {
+            SomeSchema: {
+              type: 'object',
+              properties: {
+                p1: {},
+                p2: {}
+              },
+              required: ['p1']
+            },
+            SomeArray: {
+              type: 'array',
+              items: {},
+              required: [
+                'items'
+              ]
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should complain if required field does not exist in the list of declared properties', async function () {
+      const document = {
+        openapi: '3.0.3',
+        definitions: {
+          SomeSchema: {
+            type: 'object',
+            properties: {
+              p1: {},
+              p2: {}
+            },
+            required: ['p3']
+          },
+          SomeArray: {
+            type: 'array',
+            items: {},
+            required: [
+              'item'
+            ]
+          }
+        },
+        components: {
+          schemas: {
+            SomeSchema: {
+              type: 'object',
+              properties: {
+                p1: {},
+                p2: {}
+              },
+              required: ['p1']
+            },
+            SomeArray: {
+              type: 'array',
+              items: {},
+              required: [
+                'items'
+              ]
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['definitions', 'SomeSchema'],
+        ['definitions', 'SomeArray']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+
+    it('should complain when exploring nested definitions that have a bad required field', async function () {
+      const document = {
+        openapi: '3.0.3',
+        components: {
+          schemas: {
+            SomeSchema: {
+              type: 'object',
+              properties: {
+                p1: {},
+                p2: {
+                  properties: {
+                    p3: {},
+                    p4: {}
+                  },
+                  required: ['p5']
+                }
+              }
+            },
+            SomeArray: {
+              type: 'array',
+              items: {
+                properties: {
+                  p6: {},
+                  p7: {}
+                },
+                required: ['p8']
+              }
+            },
+            required: [
+              'items'
+            ]
+          }
+        }
+      }
+      const errorPaths = [
+        ['components', 'schemas', 'SomeSchema', 'properties', 'p2'],
+        ['components', 'schemas', 'SomeArray', 'items']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('model-remove-composition-operator-oas3', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.oas3)
+
+    it('should return no error if a oneOf/allOf/anyOf has more than one entry', async function () {
+      const document = {
+        openapi: '3.0.3',
+        components: {
+          schemas: {
+            SomeSchema: {
+              properties: {
+                someProperty: {
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ]
+                },
+                anotherProperty: {
+                  anyOf: [
+                    {
+
+                    },
+                    {
+
+                    }
+                  ]
+                }
+              }
+            },
+            AnotherSchema: {
+              allOf: [{
+                properties: {
+                  someProperty: {
+                    type: 'object',
+                    properties: {
+                      anotherProperty: {},
+                      _links: {}
+                    }
+                  }
+                }
+              },
+              {
+                properties: {
+                  somethingElse: {}
+                }
+              }]
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if there is a allOf/oneOf/anyOf with just one entry', async function () {
+      const document = {
+        openapi: '3.0.3',
+        components: {
+          schemas: {
+            SomeSchema: {
+              properties: {
+                someProperty: {
+                  oneOf: [
+                    {
+                      type: 'string'
+                    }
+                  ]
+                },
+                anotherProperty: {
+                  anyOf: [
+                    {
+
+                    }
+                  ]
+                }
+              }
+            },
+            AnotherSchema: {
+              allOf: [{
+                properties: {
+                  someProperty: {
+                    type: 'object',
+                    properties: {
+                      anotherProperty: {},
+                      _links: {}
+                    }
+                  }
+                }
+              }]
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['components', 'schemas', 'SomeSchema', 'properties', 'someProperty', 'oneOf'],
+        ['components', 'schemas', 'SomeSchema', 'properties', 'anotherProperty', 'anyOf'],
+        ['components', 'schemas', 'AnotherSchema', 'allOf']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.warn
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })
   })

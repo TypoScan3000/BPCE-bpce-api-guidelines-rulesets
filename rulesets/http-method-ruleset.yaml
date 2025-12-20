@@ -13,46 +13,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: [oas2, oas3]
 
 rules:
   http-method-allowed:
     recommended: true
-    description: Only post, get, put, patch and delete HTTP methods are allowed
+    description: HTTP method must be GET, POST, PUT, PATCH or DELETE
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http method
+    extensions:
+      since: 2024-01-01
+      justification: "Other methods (HEAD, TRACE, OPTIONS) are either blocked for security reasons or considered useless."
+      tags:
+        - http method
     given: $.paths.*
     then:
       - field: "@key"
         function: pattern
         functionOptions:
-          match: "^(parameters|x-.*|post|get|put|patch|delete)$"
+          match: "^(parameters|x-.*|post|get|put|patch|delete|summary|description)$"
 
   http-method-post-only-on-search:
     recommended: true
     description: Only post can be used on a /search path
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http method
+    extensions:
+      since: 2024-01-01
+      justification: "A complex search requiring a body must be represented as a POST operation on a /search path. No other HTTP methods may be used."
+      tags:
+        - http method
     given: $.paths[?(/search$/i.test(@property))]
     then:
       - field: "@key"
         function: pattern
         functionOptions:
-          match: "^(parameters|x-.*|post)$"
+          match: "^(parameters|x-.*|post|summary|description)$"
 
   http-method-no-post-on-unit-resource:
     recommended: true
-    description: Post cannot be used on unitary resource (/resources/{id})
+    description: Post should not be used on unitary resource /resources/{id}, unless it is for an HTTP-Method-Override
     message: "{{description}} ({{path}})"
-    severity: error
-    tags:
-      - http method
+    severity: warn
+    extensions:
+      since: 2024-01-01
+      justification: "Unitary resources may only be accessed via a GET, PUT or PATCH interaction. POST has no semantic meaning in such a case."
+      tags:
+        - http method
     given: $.paths[?(/({[a-zA-Z0-9_]+})$/i.test(@property))]
     then:
       - field: "@key"
         function: pattern
         functionOptions:
-          match: "^(parameters|x-.*|get|put|patch|delete)$"
+          match: "^(parameters|x-.*|get|put|patch|delete|summary|description)$"

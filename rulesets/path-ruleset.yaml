@@ -13,16 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: [oas2, oas3]
 
 rules:
-
   path-no-trailing-slash:
     recommended: true
-    description: No trailing slash on path (cause problems on API gateway)
-    message: '{{description}} ({{path}})'
+    description: Path must not end with trailing slash
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - path
+    extensions:
+      since: 2024-01-01
+      justification: "This usually causes problems either with gateways or with toolkits."
+      tags:
+        - path
     given: $.paths
     then:
       field: "@key"
@@ -31,25 +34,35 @@ rules:
         # Always put quotes around regex (it may work without them but not on all regex)
         notMatch: "\\/$"
 
-  path-no-query-parameter: 
-      recommended: true
-      description: Path should not include a query parameter (?name=value)
-      message: '{{description}} ({{path}})'
-      severity: error
-      given: $.paths
-      then:
-        field: "@key"
-        function: pattern
-        functionOptions:
-          notMatch: "\\?"
+  path-no-query-parameter:
+    recommended: true
+    description: Path must not include a query parameter in ?name=value form.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "The OAS specification does not allow this."
+      tags:
+        - path
+        - integrity
+    given: $.paths
+    then:
+      field: "@key"
+      function: pattern
+      functionOptions:
+        notMatch: "\\?"
 
   path-lower-camel-case:
     recommended: true
     description: Path must be in lowerCamelCase
-    message: '{{description}} ({{path}})'
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - path
+    extensions:
+      since: 2024-01-01
+      justification: "This is in line with BPCE styles in use."
+      tags:
+        - path
+        - style
     given: $.paths
     then:
       field: "@key"
@@ -60,13 +73,86 @@ rules:
   path-valid-structure:
     recommended: true
     description: "Resource path must conform to /resources/{id} pattern. Collection name must be plural. And {id} can be a magic one: me, current, latest, search."
-    message: '{{description}} ({{path}})'
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - path
+    extensions:
+      since: 2024-01-01
+      justification: "This is in line with REST resources identification."
+      tags:
+        - path
+        - style
     given: $.paths
     then:
       field: "@key"
       function: pattern
       functionOptions:
-        match: "/^((\/[a-z0-9-_]+)?((\/v[0-9])+))?(\/[a-z0-9-_]+(s|i?es|ves))(\/({[a-z0-9-_]+}|me|current|latest|search)\/[a-z0-9-_]+(s|i?es|ves))*(\/({[a-z0-9-_]+}|me|current|latest|search))?$/i"
+        match: "/^((\/[a-z0-9-_]+)?((\/v[0-9])+))?(\/[a-z0-9-_]+(s|i?es|ves))((\/({[a-z0-9-_]+}|me|current|latest|search)){1,2}\/[a-z0-9-_]+(s|i?es|ves))*(\/({[a-z0-9-_]+}|me|current|latest|search)){0,2}$/i"
+
+  path-composite-key:
+    recommended: true
+    description: "It appears a composite resource Id key is used. Make sure this is a legitimate case with a robust key."
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-06-24
+      justification: "While using composite resource IDs is possible, it should be avoided as much as possible as it adds complexity and coupling to your design."
+      tags:
+        - path
+        - style
+    given: $.paths
+    then:
+      field: "@key"
+      function: pattern
+      functionOptions:
+        notMatch: "{[a-zA-Z0-9]+}\/{[a-zA-Z0-9]+}"
+
+  path-number-of-sub-resource-levels:
+    recommended: true
+    description: API should not have more than 3 sub-resource levels
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-09-11
+      justification: "An API with too many sub resource levels becomes difficult to read and use."
+      tags:
+        - path
+        - design
+    given: $.paths.*~
+    then:
+      function: pattern
+      functionOptions:
+        match: ^\/[^\/]*((\/{[^}]*})*\/[^\/]*(\/{[^}]*})*){0,3}\/?$
+
+  path-number-of-paths:
+    recommended: true
+    description: API should not have more than 10 paths
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-09-11
+      justification: "An API with too many paths becomes difficult to read and use. Its evolution becomes even more problematic. This is frequently a design issue where too many concepts and resources are bundled into one monolithic API."
+      tags:
+        - path
+        - design
+    given: $.paths
+    then:
+      function: length
+      functionOptions:
+        max: 10
+
+  request-support-json-oas3:
+    description: Every request MUST support `application/json` media type
+    formats:
+      - oas3
+    recommended: true
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "The preferred interaction is with JSON based payloads. While alternatives may be acceptable, JSON as a default content model should always be available."
+      tags:
+        - path
+        - style
+    message: "{{description}}: {{error}}"
+    given: $.paths.[*].requestBody.content[?(@property.indexOf('json') === -1 && @property.indexOf('/*') === -1)]^
+    then:
+      function: falsy

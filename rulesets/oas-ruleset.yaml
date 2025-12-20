@@ -18,5 +18,39 @@ extends:
   # These 2 includes are done in oas-ruleset but must be redone here to deactivate oas2&3 rules
   - [spectral:oas, off]
 rules:
-  oas3-schema: true
-  oas2-schema: true
+  oas3-schema: error
+  oas2-schema: error
+
+  oas31-version:
+    description: "OAS 3.1 is not supported - Only 3.0.X should be used"
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "Few tools actually support the 3.1 version, so using a 3.0.X version maximizes compatibility."
+      tags:
+        - oas
+        - version
+    given: $
+    recommended: true
+    formats:
+      - oas3_1
+    message: "{{description}} ({{path}})"
+    then:
+      function: falsy
+
+  oas2-version:
+    description: "Swagger/ OAS2 is considered legacy - consider upgrading to OAS3"
+    severity: warn
+    extensions:
+      since: 2024-01-01
+      justification: "Fewer and fewer tools actively support the 2.0 version, which presents an obsolescence risk."
+      tags:
+        - oas
+        - version
+    given: $
+    recommended: true
+    formats:
+      - oas2
+    message: "{{description}} ({{path}})"
+    then:
+      function: falsy

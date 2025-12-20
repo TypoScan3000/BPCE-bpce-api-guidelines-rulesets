@@ -13,60 +13,87 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: [oas2, oas3]
 
 extends:
   - [spectral:oas, off] # needed to activate Spectral operation-2xx-response rule or to use the oasOp2xxResponse function
+
+aliases:
+  PathItemObject:
+    - $.paths[*]
+  Responses:
+    - $.paths.*.*.responses
+  Operation:
+    - "#PathItemObject[get,post,put,delete,patch]"
+  UnitaryResource:
+    # path end with curly braces
+    - $.paths[?(/}$/i.test(@property))]
+    # path end with magic ids
+    - $.paths[?(/(\/first|\/latest|\/last|\/me|\/current)$/i.test(@property))]
+
 rules:
   # Adapted from existing Spectral OAS rule to change rule name and description (only severity can be overiddden using the following line)
   #operation-2xx-response: error
   # RuleSet functions are no more accessible
   # so can't use oasOpSuccessResponse
   # http-status-code-mandatory-2xx:
-    # recommended: true
-    # description: Operation must have at least one 2xx response.
-    # message: "{{description}} ({{path}})"
-    # severity: error
-    # tags:
-      # - http status code
-    # given: "$.paths.*[?( @property === 'get' || @property === 'put' || @property === 'post' || @property === 'delete' || @property === 'options' || @property === 'head' || @property === 'patch' || @property === 'trace' )]"
-    # then:
-      # - field: responses
-        # function: oasOpSuccessResponse
+  # recommended: true
+  # description: Operation must have at least one 2xx response.
+  # message: "{{description}} ({{path}})"
+  # severity: error
+  # tags:
+  # - http status code
+  # given: "$.paths.*[?( @property === 'get' || @property === 'put' || @property === 'post' || @property === 'delete' || @property === 'options' || @property === 'head' || @property === 'patch' || @property === 'trace' )]"
+  # then:
+  # - field: responses
+  # function: oasOpSuccessResponse
 
   # Instead of custom http-status-code-mandatory-2xx, we use default operation-success-response ruleset
   operation-success-response: error
 
   http-status-code-mandatory-401:
     recommended: true
-    description: Operation must return a 401 error response
+    description: Operation must declare a 401 error response
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
-    given: $.paths.*.*.responses
+    extensions:
+      since: 2024-01-01
+      justification: "Since all operations must systematically protected by an authentication scheme, they must declare a 401 response when the authentication challenge has failed."
+      tags:
+        - http
+        - status code
+    given: "#Responses"
     then:
       - field: "401"
         function: truthy
 
   http-status-code-mandatory-500:
     recommended: true
-    description: Operation must return a 500 error response
+    description: Operation must declare a 500 error response
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
-    given: $.paths.*.*.responses
+    extensions:
+      since: 2024-01-01
+      justification: "All operations must explicitly declare the response structure in case of service failure."
+      tags:
+        - http
+        - status code
+    given: "#Responses"
     then:
       - field: "500"
         function: truthy
 
   http-status-code-404-when-path-parameters:
     recommended: true
-    description: On operation on a path with a path parameter must return a 404 HTTP status code
+    description: Operation on a path with a path parameter must declare a 404 HTTP response.
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "Path parameter may yield a non-existent resource, which implies a 404 response as per HTTP protocol standards."
+      tags:
+        - http
+        - status code
     given: "$.paths[?(/{/i.test(@property))].*.responses"
     then:
       - field: "404"
@@ -74,11 +101,15 @@ rules:
 
   http-status-code-no-404-when-no-path-parameters:
     recommended: true
-    description: No 404 HTTP status code should be returned on operation on a path without path parameters
+    description: Operation on a path without path parameters must not return 404 response.
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "As a standard path without parameters is always defined, the 404 response is semantically not compliant with HTTP standards."
+      tags:
+        - http
+        - status code
     given: "$.paths[?(!/{/i.test(@property))].*.responses"
     then:
       - field: "404"
@@ -88,13 +119,19 @@ rules:
     recommended: true
     description: Operation must return a 400 HTTP status code in case of query, body or header parameters
     # {{error}} and not {{path}} because when using the ^ operator, the returned path is not the good one but OK in error
-    message: '{{description}} ({{error}}) ({{path}})'
+    message: "{{description}} ({{error}}) ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "The 400 return signifies that a parameter from the query, body or header was invalid."
+      tags:
+        - http
+        - status code
     given:
       - $.paths.*.[?(@.requestBody)].responses
-      - $.paths.*.*.parameters[?(/(query|body|header)/.test(@.in))]^^^.responses
+      - $.paths..parameters[?(@.in === "body")]^^^.responses
+      - $.paths..parameters[?(@.in === "query")]^^^.responses
+      - $.paths..parameters[?(@.in === "header")]^^^.responses
     then:
       - field: "400"
         function: truthy
@@ -102,143 +139,329 @@ rules:
   # Using separate rule for each method to stay user friendly (get, put and patch could be handled with the same rule)
   http-status-code-get:
     recommended: true
-    description: Get operation can only return 200, 400, 401, 403, 404, and 500 HTTP status codes
+    description: GET operation can only return 200, 400, 401, 403, 404, 429 and 500 HTTP status codes
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset."
+      tags:
+        - http
+        - status code
     given: $.paths.*.get.responses
     then:
       - field: "@key"
         function: enumeration
         functionOptions:
           values:
-            - '200'
-            - '400'
-            - '401'
-            - '403'
-            - '404'
-            - '500'
-            - '503'
+            - "200"
+            - "400"
+            - "401"
+            - "403"
+            - "404"
+            - "429"
+            - "500"
+            - "503"
+
+  http-status-code-get-no-400-on-unitary-resource:
+    recommended: true
+    description: GET operation on a unitary resource must not return 400 HTTP status code
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-03-04
+      justification: "The 400 return signifies that a parameter from the query, body or header was invalid. As a unitary resource is always defined, the 400 response is semantically not compliant with HTTP standards."
+      tags:
+        - http
+        - status code
+    given: "#UnitaryResource.get.responses"
+    then:
+      - field: "400"
+        function: falsy
 
   http-status-code-put:
     recommended: true
-    description: Put operation can only return 200, 400, 401, 403, 404, and 500 HTTP status codes
+    description: PUT operation can only return 200, 400, 401, 403, 404, 429 and 500 HTTP status codes
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset."
+      tags:
+        - http
+        - status code
     given: $.paths.*.put.responses
     then:
       - field: "@key"
         function: enumeration
         functionOptions:
           values:
-            - '200'
-            - '400'
-            - '401'
-            - '403'
-            - '404'
-            - '500'
-            - '503'
+            - "200"
+            - "400"
+            - "401"
+            - "403"
+            - "404"
+            - "429"
+            - "500"
+            - "503"
 
   http-status-code-patch:
     recommended: true
-    description: Patch operation can only return 200, 204, 400, 401, 403, 404, and 500 HTTP status codes
+    description: PATCH operation can only return 200, 204, 400, 401, 403, 404, 429 and 500 HTTP status codes
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset."
+      tags:
+        - http
+        - status code
     given: $.paths.*.patch.responses
     then:
       - field: "@key"
         function: enumeration
         functionOptions:
           values:
-            - '200'
-            - '204'
-            - '400'
-            - '401'
-            - '403'
-            - '404'
-            - '500'
-            - '503'
+            - "200"
+            - "204"
+            - "400"
+            - "401"
+            - "403"
+            - "404"
+            - "429"
+            - "500"
+            - "503"
 
   http-status-code-delete:
     recommended: true
-    description: Delete operation can only return 200, 204, 400, 401, 403, 404, and 500 HTTP status codes
+    description: DELETE operation can only return 200, 204, 401, 403, 404, 429 and 500 HTTP status codes
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset."
+      tags:
+        - http
+        - status code
     given: $.paths.*.delete.responses
     then:
       - field: "@key"
         function: enumeration
         functionOptions:
           values:
-            - '200'
-            - '204'
-            - '400'
-            - '401'
-            - '403'
-            - '404'
-            - '500'
-            - '503'
+            - "200"
+            - "204"
+            - "401"
+            - "403"
+            - "404"
+            - "429"
+            - "500"
+            - "503"
 
   http-status-code-post:
     recommended: true
-    description: Post operation can only return 200, 201, 202, 400, 401, 403, 404, and 500 HTTP status codes
+    description: POST operation can only return 200, 201, 202, 400, 401, 403, 404, 429 and 500 HTTP status codes
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset."
+      tags:
+        - http
+        - status code
     given: $.paths.*.post.responses
     then:
       - field: "@key"
         function: enumeration
         functionOptions:
           values:
-            - '200'
-            - '201'
-            - '202'
-            - '400'
-            - '401'
-            - '403'
-            - '404'
-            - '500'
-            - '503'
+            - "200"
+            - "201"
+            - "202"
+            - "400"
+            - "401"
+            - "403"
+            - "404"
+            - "429"
+            - "500"
+            - "503"
 
   http-status-code-post-search:
     recommended: true
-    description: Post /search operation can only return 200, 400, 401, 403 and 500 HTTP status codes
+    description: POST /search operation can only return 200, 400, 401, 403, 429 and 500 HTTP status codes
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - http status code
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset."
+      tags:
+        - http
+        - status code
     given: "$.paths[?(/search$/i.test(@property))].post.responses"
     then:
       - field: "@key"
         function: enumeration
         functionOptions:
           values:
-            - '200'
-            - '400'
-            - '401'
-            - '403'
-            - '404'
-            - '500'
-            - '503'
+            - "200"
+            - "400"
+            - "401"
+            - "403"
+            - "404"
+            - "429"
+            - "500"
+            - "503"
 
   http-status-code-post-unusual-200:
     recommended: true
-    description: Post operation which are not /search returning 200 are unusual, did you mean 201 or 202?
+    description: POST operation which are not /search must not return 200 - should return 201 or 202
     message: "{{description}} ({{path}})"
-    severity: info
-    tags:
-      - http status code
-      - manual check
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "For simplicity and consistency, possible HTTP return codes have been limited to a reasonable subset. The only exception to this rule is when using a method override, in which case an exception will be granted."
+      tags:
+        - http
+        - status code
+        - manual check
     given: "$.paths[?(!/search$/i.test(@property))].post.responses"
     then:
       - field: "200"
         function: falsy
+
+  operation-operationId-length:
+    recommended: true
+    description: operationId should be less than 100 characters
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-08-29
+      justification: "OperationId that are too long become unusable for humans and cause issues with code generators."
+      tags:
+        - operation
+    given: "#Operation"
+    then:
+      - field: "operationId"
+        function: length
+        functionOptions:
+          min: 1
+          max: 100
+
+  operation-operationId-format:
+    recommended: true
+    description: operationId should follow the prescribed naming pattern
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "#Operation"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^(get|create|update|replace|delete|search)([A-Z]{1,3}[a-z]*)+$"
+
+  operation-operationId-get-format:
+    recommended: true
+    description: operationId should begin with get
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "#PathItemObject[get]"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^get"
+
+  operation-operationId-delete-format:
+    recommended: true
+    description: operationId should begin with delete
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "#PathItemObject[delete]"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^delete"
+
+  operation-operationId-put-format:
+    recommended: true
+    description: operationId should begin with update or replace
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "#PathItemObject[put]"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^(update|replace)"
+
+  operation-operationId-patch-format:
+    recommended: true
+    description: operationId should begin with update
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "#PathItemObject[patch]"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^update"
+
+  operation-operationId-post-format:
+    recommended: true
+    description: operationId should begin with create
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "$.paths[?(!/search$/i.test(@property))].post"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^create"
+
+  operation-operationId-post-search-format:
+    recommended: true
+    description: operationId should begin with search
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-10-17
+      justification: "As per guidelines, operationId should follow the prescribed pattern <verb><resource>"
+      tags:
+        - operation
+    given: "$.paths[?(/search$/i.test(@property))].post"
+    then:
+      - field: "operationId"
+        function: pattern
+        functionOptions:
+          match: "^search"

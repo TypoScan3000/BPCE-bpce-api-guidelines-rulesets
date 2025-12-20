@@ -1,0 +1,7 @@
+semi: true
+trailingComma: "none"
+overrides:
+  - files: "*.yaml"
+    options:
+      singleQuote: false
+      quoteProps: "preserve"

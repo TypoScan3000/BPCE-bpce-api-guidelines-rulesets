@@ -29,6 +29,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             parameters: operation,
@@ -48,6 +49,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -74,6 +76,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -93,6 +96,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -123,6 +127,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        swagger: '2.0',
         paths: {
           somepath: {
             parameters: [],
@@ -144,6 +149,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        swagger: '2.0',
         paths: {
           somepath: {
             get: operation,
@@ -166,6 +172,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        swagger: '2.0',
         paths: {
           somepath: {
             get: operation,
@@ -183,6 +190,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        swagger: '2.0',
         paths: {
           somepath: {
             get: operation,
@@ -205,6 +213,7 @@ describe('parameter', function () {
     it('should ignore path level parameters, x-tensions, post, put, patch operations', function () {
       const operation = {}
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             parameters: [],
@@ -222,6 +231,7 @@ describe('parameter', function () {
     it('should check get and delete operations', function () {
       const operation = {}
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             get: operation,
@@ -240,6 +250,7 @@ describe('parameter', function () {
     it('should return no error if no request body is found on get or delete', async function () {
       const operation = {}
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             get: operation,
@@ -255,6 +266,7 @@ describe('parameter', function () {
         requestBody: {}
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             get: operation,
@@ -281,6 +293,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        swagger: '2.0',
         paths: {
           somepath: {
             somemethod: operation
@@ -300,6 +313,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: operation
@@ -319,6 +333,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: operation
@@ -341,6 +356,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: operation
@@ -366,6 +382,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -389,6 +406,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -411,6 +429,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -435,6 +454,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -454,6 +474,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -480,6 +501,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -507,6 +529,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             parameters: operation,
@@ -531,6 +554,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -553,6 +577,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             parameters: operation,
@@ -578,6 +603,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -599,6 +625,7 @@ describe('parameter', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -625,6 +652,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -657,6 +685,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -682,6 +711,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -712,6 +742,7 @@ describe('parameter', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation
@@ -732,10 +763,11 @@ describe('parameter', function () {
         { in: 'header', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -749,9 +781,10 @@ describe('parameter', function () {
         { in: 'header', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -766,10 +799,11 @@ describe('parameter', function () {
         { in: 'path', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -790,9 +824,10 @@ describe('parameter', function () {
         { in: 'path', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -819,9 +854,10 @@ describe('parameter', function () {
         { in: 'path', name: 'aLongerNameWithNumber9' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -839,9 +875,10 @@ describe('parameter', function () {
         { in: 'path', name: 'yet another name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -868,9 +905,10 @@ describe('parameter', function () {
         { in: 'query', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -883,9 +921,10 @@ describe('parameter', function () {
         { in: 'query', name: 'name9Longer' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -898,6 +937,10 @@ describe('parameter', function () {
     })
   })
 
+  describe('parameter-query-param-on-collection', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+  })
+
   describe('parameter-path-name-not-id', function () {
     linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
 
@@ -908,10 +951,11 @@ describe('parameter', function () {
         { in: 'body', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -927,9 +971,10 @@ describe('parameter', function () {
         { in: 'body', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -942,10 +987,11 @@ describe('parameter', function () {
         { in: 'path', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -962,9 +1008,10 @@ describe('parameter', function () {
         { in: 'path', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -982,9 +1029,10 @@ describe('parameter', function () {
         { in: 'path', name: 'somethingElse' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -999,9 +1047,10 @@ describe('parameter', function () {
         { in: 'path', name: 'iD' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1016,6 +1065,77 @@ describe('parameter', function () {
     })
   })
 
+  describe('parameter-query-sort-name', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if parameter name is sort', async function () {
+      const parameters = [
+        { in: 'query', name: 'sort' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if parameter name is order or orderBy', async function () {
+      const parameters = [
+        { in: 'query', name: 'order' },
+        { in: 'query', name: 'orderBy' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0', 'name'],
+        ['paths', 'somepath', 'parameters', '1', 'name']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-query-sort-schema', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if sort parameter is defined correctly', async function () {
+      const parameters = [
+        {
+          in: 'query',
+          name: 'sort',
+          style: 'form',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+              pattern: '^(+|-)?[a-zA-Z]+$',
+              example: '+amount'
+            }
+          }
+        }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+  })
+
   describe('parameter-query-not-required', function () {
     linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
 
@@ -1026,10 +1146,11 @@ describe('parameter', function () {
         { in: 'body', required: true }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -1045,9 +1166,10 @@ describe('parameter', function () {
         { in: 'body', required: true }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1061,10 +1183,11 @@ describe('parameter', function () {
         { in: 'query', name: 'parameterTwo', required: true }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -1083,9 +1206,10 @@ describe('parameter', function () {
         { in: 'query', name: 'parameterTwo', required: true }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1103,9 +1227,10 @@ describe('parameter', function () {
         { in: 'query', name: 'parameterTwo', required: false }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1117,9 +1242,10 @@ describe('parameter', function () {
         { in: 'query', name: 'parameter', required: true }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1127,6 +1253,133 @@ describe('parameter', function () {
         ['paths', 'somepath', 'parameters', '0', 'required']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.warn
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-query-or-path-not-object', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if a query or parameter is defined as string, integer, array.', async function () {
+      const parameters = [
+        {
+          in: 'query',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+              pattern: '^(+|-)?[a-zA-Z]+$',
+              example: '+amount'
+            },
+            maxItems: 3
+          }
+        },
+        {
+          in: 'query',
+          schema: {
+            type: 'string'
+          }
+        },
+        {
+          in: 'query',
+          schema: {
+            type: 'integer'
+          }
+        }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if query or path param type is object', async function () {
+      const parameters = [
+        { in: 'query', name: 'something', schema: { type: 'object' } },
+        { in: 'path', name: 'somethingElse', schema: { type: 'object' } }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0', 'schema', 'type'],
+        ['paths', 'somepath', 'parameters', '1', 'schema', 'type']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-query-pagination-type', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return ok if query parameter is type integer/int32 is present', async function () {
+      const parameters = [
+        { in: 'query', name: 'pageSize', schema: { type: 'integer', format: 'int32' } },
+        { in: 'query', name: 'pageNumber', type: 'integer', format: 'int32' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if query param type is not integer', async function () {
+      const parameters = [
+        { in: 'query', name: 'pageSize', schema: { type: 'string', format: 'date' } },
+        { in: 'query', name: 'pageNumber', type: 'number', format: 'float' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0'],
+        ['paths', 'somepath', 'parameters', '0', 'schema', 'type'],
+        ['paths', 'somepath', 'parameters', '1']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+
+    it('should return an error if query param format is not int32', async function () {
+      const parameters = [
+        { in: 'query', name: 'pageSize', schema: { type: 'integer', format: 'int64' } },
+        { in: 'query', name: 'pageNumber', type: 'number', format: 'int64' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0'],
+        ['paths', 'somepath', 'parameters', '0', 'schema', 'format'],
+        ['paths', 'somepath', 'parameters', '1']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })
   })
@@ -1141,10 +1394,11 @@ describe('parameter', function () {
         { in: 'body' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -1160,9 +1414,10 @@ describe('parameter', function () {
         { in: 'body' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1175,10 +1430,11 @@ describe('parameter', function () {
         { in: 'path', name: 'parameter' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -1195,9 +1451,10 @@ describe('parameter', function () {
         { in: 'path', name: 'parameter' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1213,9 +1470,10 @@ describe('parameter', function () {
         { in: 'path', name: 'parameter', required: true }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1228,14 +1486,138 @@ describe('parameter', function () {
         { in: 'path', name: 'parameterTwo' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
       const errorPaths = [
         ['paths', 'somepath', 'parameters', '0', 'required'],
+        ['paths', 'somepath', 'parameters', '1']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-path-pattern-protected', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should ignore non path operation level parameter', function () {
+      const parameters = [
+        { in: 'header' },
+        { in: 'query' },
+        { in: 'body' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      const givenIndex = 0
+      this.linterTester.checkGivenNotFound(document, givenIndex)
+    })
+
+    it('should return no error if path parameter pattern is present', async function () {
+      const parameters = [
+        { in: 'path', name: 'parameterOne', schema: { type: 'string', pattern: 'something' } },
+        { in: 'path', name: 'parameterTwo', pattern: '[a-Z]+' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if path parameter pattern is absent', async function () {
+      const parameters = [
+        { in: 'path', name: 'parameterOne', schema: { type: 'string' } },
+        { in: 'path', name: 'parameterTwo' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0', 'schema'],
+        ['paths', 'somepath', 'parameters', '1']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-header-pattern-protected', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should ignore non header operation level parameter', function () {
+      const parameters = [
+        { in: 'path' },
+        { in: 'query' },
+        { in: 'body' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      const givenIndex = 0
+      this.linterTester.checkGivenNotFound(document, givenIndex)
+    })
+
+    it('should return no error if header parameter pattern is present or maxItems if array', async function () {
+      const parameters = [
+        { in: 'header', name: 'parameterOne', schema: { type: 'string', pattern: 'something' } },
+        { in: 'header', name: 'parameterTwo', type: 'string', pattern: '[a-Z]+' },
+        { in: 'header', name: 'parameterThree', schema: { type: 'array', maxItems: 3 } }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if header parameter pattern is absent', async function () {
+      const parameters = [
+        { in: 'header', name: 'parameterOne', schema: { type: 'string' } },
+        { in: 'header', name: 'parameterTwo' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0', 'schema'],
         ['paths', 'somepath', 'parameters', '1']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.error
@@ -1251,16 +1633,17 @@ describe('parameter', function () {
         { in: 'header' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
       }
       const expectedPaths = [
-        ['paths', 'somepath', 'somemethod', 'parameters', '0', 'in']
+        ['paths', 'somepath', 'somemethod', 'parameters', '0']
       ]
       const givenIndex = 0
       this.linterTester.checkGivenFound(document, expectedPaths, givenIndex)
@@ -1271,14 +1654,15 @@ describe('parameter', function () {
         { in: 'header' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
       const expectedPaths = [
-        ['paths', 'somepath', 'parameters', '0', 'in']
+        ['paths', 'somepath', 'parameters', '0']
       ]
       const givenIndex = 1
       this.linterTester.checkGivenFound(document, expectedPaths, givenIndex)
@@ -1289,9 +1673,10 @@ describe('parameter', function () {
         { in: 'path' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1303,14 +1688,15 @@ describe('parameter', function () {
         { in: 'header' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
       const errorPaths = [
-        ['paths', 'somepath', 'parameters', '0', 'in']
+        ['paths', 'somepath', 'parameters', '0']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.hint
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
@@ -1325,10 +1711,11 @@ describe('parameter', function () {
         { in: 'body', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -1344,9 +1731,10 @@ describe('parameter', function () {
         { in: 'body', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1359,10 +1747,11 @@ describe('parameter', function () {
         { in: 'header', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             somemethod: {
-              parameters: parameters
+              parameters
             }
           }
         }
@@ -1379,9 +1768,10 @@ describe('parameter', function () {
         { in: 'header', name: 'name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1405,9 +1795,10 @@ describe('parameter', function () {
         { in: 'header', name: 'X-Name' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1427,21 +1818,20 @@ describe('parameter', function () {
         { in: 'header', name: 'LONGER-NAME' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
       const errorPaths = [
         ['paths', 'somepath', 'parameters', '0', 'name'],
-        ['paths', 'somepath', 'parameters', '1', 'name'],
         ['paths', 'somepath', 'parameters', '2', 'name'],
         ['paths', 'somepath', 'parameters', '4', 'name'],
         ['paths', 'somepath', 'parameters', '5', 'name'],
         ['paths', 'somepath', 'parameters', '6', 'name'],
-        ['paths', 'somepath', 'parameters', '7', 'name'],
-        ['paths', 'somepath', 'parameters', '8', 'name']
+        ['paths', 'somepath', 'parameters', '7', 'name']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
@@ -1455,14 +1845,34 @@ describe('parameter', function () {
 
     it('should return no error if header name is authorized', async function () {
       const parameters = [
-        { in: 'header', name: 'Accept' },
         { in: 'header', name: 'Accept-Language' },
-        { in: 'header', name: 'Accept-Datetime' }
+        { in: 'header', name: 'Accept-Datetime' },
+        { in: 'header', name: 'Access-Control-Allow-Origin' },
+        { in: 'header', name: 'Cache-Control' },
+        { in: 'header', name: 'Content-Security-Policy' },
+        { in: 'header', name: 'Deprecation' },
+        { in: 'header', name: 'ETag' },
+        { in: 'header', name: 'If-Match' },
+        { in: 'header', name: 'If-Modified-Since' },
+        { in: 'header', name: 'If-None-Match' },
+        { in: 'header', name: 'Origin' },
+        { in: 'header', name: 'Prefer' },
+        { in: 'header', name: 'RateLimit' },
+        { in: 'header', name: 'RateLimit-Policy' },
+        { in: 'header', name: 'Retry-After' },
+        { in: 'header', name: 'Strict-Transport-Security' },
+        { in: 'header', name: 'WWW-Authenticate' },
+        { in: 'header', name: 'X-Content-Type-Options' },
+        { in: 'header', name: 'X-CorrelationID' },
+        { in: 'header', name: 'X-Frame-Options' },
+        { in: 'header', name: 'X-HTTP-Method-Override' },
+        { in: 'header', name: 'X-StepUp-Token' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1475,9 +1885,10 @@ describe('parameter', function () {
         { in: 'header', name: 'Access-Control-Allow-Credentials' }
       ]
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
-            parameters: parameters
+            parameters
           }
         }
       }
@@ -1490,5 +1901,220 @@ describe('parameter', function () {
     })
   })
 
+  describe('parameter-not-iban', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if query or path name is authorized', async function () {
+      const parameters = [
+        { in: 'header', name: 'Ibanez' },
+        { in: 'query', name: 'multiband' },
+        { in: 'path', name: 'multibank' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters,
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if query, or path name ends with iban', async function () {
+      const parameters = [
+        { in: 'query', name: 'partialIban' },
+        { in: 'path', name: 'iban' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters,
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0', 'name'],
+        ['paths', 'somepath', 'parameters', '1', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '0', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '1', 'name']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-not-gdpr-sensitive', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if query or path name is authorized', async function () {
+      const parameters = [
+        { in: 'query', name: 'bankName' },
+        { in: 'path', name: 'someId' },
+        { in: 'path', name: 'systemName' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters,
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if query, or path name contains a banned substring', async function () {
+      const parameters = [
+        { in: 'query', name: 'customerFirstName' },
+        { in: 'query', name: 'customerlastname' },
+        { in: 'query', name: 'somethingFamilyName' },
+        { in: 'query', name: 'birthDate' },
+        { in: 'query', name: 'myDateOfBirth' },
+        { in: 'query', name: 'ssn' },
+        { in: 'query', name: 'socialSecurity' },
+        { in: 'path', name: 'ssn' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters,
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '0', 'name'],
+        ['paths', 'somepath', 'parameters', '1', 'name'],
+        ['paths', 'somepath', 'parameters', '2', 'name'],
+        ['paths', 'somepath', 'parameters', '3', 'name'],
+        ['paths', 'somepath', 'parameters', '4', 'name'],
+        ['paths', 'somepath', 'parameters', '5', 'name'],
+        ['paths', 'somepath', 'parameters', '6', 'name'],
+        ['paths', 'somepath', 'parameters', '7', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '0', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '1', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '2', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '3', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '4', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '5', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '6', 'name'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '7', 'name']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-example-not-iban', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if there is no example or if the example does not contain an IBAN regex', async function () {
+      const parameters = [
+        { in: 'header', name: 'p1', example: 'biniou' },
+        { in: 'query', name: 'p2', example: 'FR76' },
+        { in: 'path', name: 'p3', example: 'FR76' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters,
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if query, or path name ends with iban', async function () {
+      const parameters = [
+        { in: 'header', name: 'p1', example: 'FR76biniou-trucmachin' },
+        { in: 'query', name: 'p2', example: 'FR7613807000343171969455343' },
+        { in: 'path', name: 'p3', example: '14670-FR7613807000343171969455343FR76-jeplanque-mon-iban-dans-la-masse' }
+      ]
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters,
+            somemethod: {
+              parameters
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', 'somepath', 'parameters', '1', 'example'],
+        ['paths', 'somepath', 'parameters', '2', 'example'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '1', 'example'],
+        ['paths', 'somepath', 'somemethod', 'parameters', '2', 'example']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('parameter-header-definition-to-ignored', () => {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+    it('should return no error if there is no parameter', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          somepath: {
+            parameters: [],
+            somemethod: {
+              parameters: []
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    const headerNamesToIgnored = ['Accept', 'Content-Type', 'Authorization']
+    headerNamesToIgnored.forEach(name => {
+      it(`should return error if there is a header parameter ${name}`, async function () {
+        const document = {
+          openapi: '3.0.3',
+          paths: {
+            somepath: {
+              parameters: [
+                { in: 'header', name }
+              ],
+              somemethod: {
+                parameters: [
+                  { in: 'header', name }
+                ]
+              }
+            }
+          }
+        }
+        const errorPaths = [
+          ['paths', 'somepath', 'parameters', '0', 'name'],
+          ['paths', 'somepath', 'somemethod', 'parameters', '0', 'name']
+        ]
+        const errorSeverity = linterTestSuite.SEVERITY.warn
+        await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+      })
+    })
+  })
+
+  // Finalize the test suite
   linterTestSuite.finalize()
 })

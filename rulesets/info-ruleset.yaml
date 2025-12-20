@@ -13,13 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: ["oas2", "oas3"]
+
+extends:
+  - [spectral:oas, off]
 
 rules:
+  # Two rules inherited from spectral applicable to info, set to error level.
+  info-contact: error
+  contact-properties: error
+
   info-defined:
     description: The info section must be defined
-    message: '{{description}} ({{path}})'
-    tags:
-      - info
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Providing meaningful information about an API in a very synthetic way is crucial."
+      tags:
+        - info
+        - documentation
     recommended: true
     severity: error
     given: $
@@ -28,10 +40,14 @@ rules:
       function: truthy
 
   info-name-defined:
-    description: An API name (info.title) must be defined
-    message: '{{description}} ({{path}})'
-    tags:
-      - info
+    description: An API name (info.title) must be defined without any special characters
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "A clear name is the first sign that the API purpose is easy to understand."
+      tags:
+        - info
+        - documentation
     recommended: true
     severity: error
     given: $.info
@@ -41,9 +57,13 @@ rules:
 
   info-name-not-contain-api:
     description: An API name (info.title) should not contain the word api
-    message: '{{description}} ({{path}})'
-    tags:
-      - info
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "A clear name is the first sign that the API purpose is easy to understand."
+      tags:
+        - info
+        - documentation
     recommended: true
     severity: error
     given: $.info.title
@@ -54,9 +74,13 @@ rules:
 
   info-description-provided:
     description: A description of the API (info.description) must be provided
-    message: '{{description}} ({{path}})'
-    tags:
-      - info
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "We must provide a clear and meaningful description so that in a few sentences a developer can understand what to expect from the API."
+      tags:
+        - info
+        - documentation
     recommended: true
     severity: error
     given: $.info
@@ -66,9 +90,13 @@ rules:
 
   info-description-valid-content:
     description: The API's description should not start by sentences such as "this API ...", "this service ..." or talk about "web service" or "API"
-    message: '{{description}} ({{path}})'
-    tags:
-      - info
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "The objective is to detect trivial descriptions that would not meet standard quality expectations."
+      tags:
+        - info
+        - documentation
     recommended: true
     severity: info
     given: $.info.description
@@ -85,3 +113,20 @@ rules:
       - function: pattern
         functionOptions:
           notMatch: "/^.*api.*$/i"
+
+  info-version:
+    description: "API Version must comply with SemVer practices"
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "All BPCE APIs must use a common versioning practice that clearly indicates when changes are backward-compatible or not."
+      tags:
+        - info
+        - versioning
+    given: $.info.version
+    recommended: true
+    message: "{{description}} ({{path}})"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(0|[1-9][0-9]*).(0|[1-9][0-9]*).(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)?(.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?('+'([0-9a-zA-Z-]+(.[0-9a-zA-Z-]+)*))?$"

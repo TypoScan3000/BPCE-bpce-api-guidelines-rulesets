@@ -22,36 +22,59 @@
 # TODO info to alert when additionalInformation is used
 # TODO warn to alert when there's no pagination on collection
 # TODO warn to alert when required query parameter (use optional with default value if possible)
+formats: ["oas2", "oas3"]
+
+aliases:
+  ResponseCollectionSchema:
+    - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.schema # oas2
+    - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.content.'application/json'.schema # oas3
+    # https://github.com/stoplightio/spectral/issues/1920
+    - $.paths[?(/search$/.test(@property))].post.responses.200.schema # oas2
+    - $.paths[?(/search$/.test(@property))].post.responses.200.content.'application/json'.schema # oas3
+  Response2xx4xx5xxExcept204:
+    - $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))]
+  ResponseExcept204300:
+    - $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))] # oas2
+    - $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))].content.'application/json' # oas3
+  ErrorResponse:
+    - $.paths.*.*.responses[?(/4..|5../.test(@property))] # oas2
+    - $.paths.*.*.responses[?(/4..|5../.test(@property))].content.'application/json' # oas3
 
 rules:
-
   response-schema-is-defined-oas2:
-    formats: ['oas2']
+    formats: ["oas2"]
     recommended: true
-    description: A 2xx (except 204), 4xx or 5xx response must return data
+    description: A 2xx - except 204 - , or 4xx or 5xx response must return data
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
-    given: $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))]
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent REST behavior."
+      tags:
+        - model
+        - response
+    given: "#Response2xx4xx5xxExcept204"
     then:
       - field: schema
         function: truthy
 
   response-schema-is-defined-oas3:
-    formats: ['oas3']
+    formats: ["oas3"]
     recommended: true
-    description: A 2xx (except 204), 4xx or 5xx response must return data
+    description: A 2xx - except 204 -, 4xx or 5xx response must return data
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
-    given: $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))]
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent REST behavior."
+      tags:
+        - model
+        - response
+    given: "#Response2xx4xx5xxExcept204"
     then:
       - function: schema
         functionOptions:
           schema:
-            $schema: "http://json-schema.org/draft-07/schema#"
             additionalProperties: true
             required:
               - content
@@ -72,8 +95,12 @@ rules:
     description: A 204 No Content or 3xx redirection response cannot return data
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent REST behavior."
+      tags:
+        - model
+        - response
     given: $.paths.*.*.responses[?(/^204|3..$/.test(@property))]
     then:
       - field: schema # oas 2
@@ -83,20 +110,21 @@ rules:
 
   response-schema-is-an-object:
     recommended: true
-    description: A success (2xx, except 204) or an error (4xx or 5xx) must return an object
+    description: A success - 2xx, except 204 - or an error -4xx or 5xx- must return an object
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
-    given:
-      - $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))].schema # oas2
-      - $.paths.*.*.responses[?(/^2(?!04)..|4..|5..$/.test(@property))].content.'application/json'.schema # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "Returning objects protects future backward-compatible changes as atomic types and arrays are closed by design."
+      tags:
+        - model
+        - response
+    given: "#ResponseExcept204300.schema"
     then:
       - function: schema
         functionOptions:
           # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
           schema:
-            $schema: "http://json-schema.org/draft-07/schema#"
             type: object
             properties:
               type:
@@ -109,17 +137,18 @@ rules:
     description: An error must conform to standard schema
     message: "{{description}} ({{path}}) {{error}}"
     severity: error
-    tags:
-      - model response
-    given:
-      - $.paths.*.*.responses[?(/4..|5../.test(@property))].schema # oas2
-      - $.paths.*.*.responses[?(/4..|5../.test(@property))].content.'application/json'.schema # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent Error responses are expected to ease integration of all the Group APIs."
+      tags:
+        - model
+        - response
+        - consistency
+    given: "#ErrorResponse.schema"
     then:
       function: schema
       functionOptions:
         schema:
-          # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
-          $schema: "http://json-schema.org/draft-04/schema#"
           type: object
           required:
             - required
@@ -150,7 +179,7 @@ rules:
                     type:
                       type: string
                       enum:
-                      - array
+                        - array
                     items:
                       type: object
                       required:
@@ -233,23 +262,21 @@ rules:
 
   response-collection-schema-is-valid:
     recommended: true
-    description: A list response (get /resources or post /resources/search) must be an object with a mandatory property items which is a list and optional additionalInformation and page (pagination) properties
+    description: A list response  from a GET /resources or POST /resources/search must be an object with a mandatory property items which is a list and optional additionalInformation and page properties
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
-    given:
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.schema # oas2
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.content.'application/json'.schema # oas3
-      # https://github.com/stoplightio/spectral/issues/1920
-      - $.paths[?(/search$/.test(@property))].post.responses.200.schema # oas2
-      - $.paths[?(/search$/.test(@property))].post.responses.200.content.'application/json'.schema # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent Collection responses are expected to ease integration of all the Group APIs."
+      tags:
+        - model
+        - response
+        - consistency
+    given: "#ResponseCollectionSchema"
     then:
       function: schema
       functionOptions:
         schema:
-          # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
-          $schema: "http://json-schema.org/draft-04/schema#"
           type: object
           required:
             - properties
@@ -279,27 +306,27 @@ rules:
                 page:
                   type: object
                   # Testing page object format in another rule
-
+                sort: 
+                  type: object
+                  
   response-collection-items-schema-is-valid:
     recommended: true
-    description: The items property of a list response (get /resources or post /resources/search) must be an array of object (no atomic like string or number nor array)
+    description: The items property of a list response must be an array of object
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
-    given:
-      # Same regex as response-collection-schema-is-valid, no need to test again that part
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.schema.properties.items.items # oas2
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.content.'application/json'.schema.properties.items.items # oas3
-      # https://github.com/stoplightio/spectral/issues/1920
-      - $.paths[?(/search$/.test(@property))].post.responses.200.schema.properties.items.items # oas2
-      - $.paths[?(/search$/.test(@property))].post.responses.200.content.'application/json'.schema.properties.items.items # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent Collection responses are expected to ease integration of all the Group APIs. The choice of object allows for backward-compatible future changes, whereas atomic types or arrays cannot."
+      tags:
+        - model
+        - response
+        - consistency
+    given: "#ResponseCollectionSchema.properties.items.items"
     then:
       - function: schema
         functionOptions:
           # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
           schema:
-            $schema: "http://json-schema.org/draft-04/schema#"
             type: object
             properties:
               type:
@@ -309,24 +336,22 @@ rules:
 
   response-collection-additional-information-schema-is-valid:
     recommended: true
-    description: The additionalInformation property of a list response (get /resources or post /resources/search) must be an object (no atomic like string or number nor array)
+    description: The additionalInformation property of a list response must be an object
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - model response
-    given:
-      # Same regex as response-collection-schema-is-valid, no need to test again that part
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.schema.properties.additionalInformation
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.content.'application/json'.schema.properties.additionalInformation
-      # https://github.com/stoplightio/spectral/issues/1920
-      - $.paths[?(/search$/.test(@property))].post.responses.200.schema.properties.additionalInformation
-      - $.paths[?(/search$/.test(@property))].post.responses.200.content.'application/json'.schema.properties.additionalInformation
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent Error responses are expected to ease integration of all the Group APIs."
+      tags:
+        - model
+        - response
+        - consistency
+    given: "#ResponseCollectionSchema.properties.additionalInformation"
     then:
       - function: schema
         functionOptions:
           # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
           schema:
-            $schema: "http://json-schema.org/draft-04/schema#"
             type: object
             properties:
               type:
@@ -336,24 +361,23 @@ rules:
 
   response-collection-page-schema-is-valid:
     recommended: true
-    description: The page property of a list response (get /resources or post /resources/search) which provide pagination data must conform to standard schema
+    description: The page property of a list response which provide pagination data must conform to standard schema
     message: "{{description}} ({{path}}) ({{error}})"
     severity: error
-    tags:
-      - model response
-    given:
-      # Same regex as response-collection-schema-is-valid, no need to test again that part
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.schema.properties.page
-      - $.paths[?(/(s|i?es|ves)$/i.test(@property))].get.responses.200.content.'application/json'.schema.properties.page
-      # https://github.com/stoplightio/spectral/issues/1920
-      - $.paths[?(/search$/.test(@property))].post.responses.200.schema.properties.page
-      - $.paths[?(/search$/.test(@property))].post.responses.200.content.'application/json'.schema.properties.page
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent Error responses are expected to ease integration of all the Group APIs."
+      tags:
+        - model
+        - response
+        - consistency
+        - page
+    given: "#ResponseCollectionSchema.properties.page"
     then:
       - function: schema
         functionOptions:
           # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
           schema:
-            $schema: "http://json-schema.org/draft-07/schema#"
             oneOf:
               - type: object
                 properties:
@@ -408,28 +432,76 @@ rules:
                     required:
                       - after
                     properties:
-                        before:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                              enum:
-                                - string
-                        after:
-                          type: object
-                          properties:
-                            type:
-                              type: string
-                              enum:
-                                - string
+                      before:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - string
+                      after:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - string
+
+  response-collection-sort-schema-is-valid:
+    recommended: true
+    description: The sort property of a list response must be an array of strings, with the proper pattern and example.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2025-07-20
+      justification: "Consistent Collection responses are expected to ease integration of all the Group APIs. The choice of object allows for backward-compatible future changes, whereas atomic types or arrays cannot."
+      tags:
+        - model
+        - response
+        - consistency
+    given: "#ResponseCollectionSchema.properties.sort"
+    then:
+      - function: schema
+        functionOptions:
+          schema:
+            type: object
+            required:
+              - type
+              - items
+            properties:
+              type:
+                type: string
+                enum:
+                    - array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - string
+                  pattern:
+                    type: string
+                  example: 
+                    type: string
+                    pattern: '^([\\-])?[a-zA-Z]+$'
+                required:
+                  - type
+                  - pattern
+                  - example
 
   response-no-empty-required:
     recommended: true
     description: A response without any high level required property is not recommended
-    message: '{{description}} ({{path}})'
+    message: "{{description}} ({{path}})"
     severity: warn
-    tags:
-      - model response
+    extensions:
+      since: 2024-01-01
+      justification: "The absence of required properties does not help developers to understand which parts of the response they can rely on in their code."
+      tags:
+        - model
+        - response
+        - integration
     given:
       - $.paths.*.*.responses.*.schema
       - $.paths.*.*.responses.*.content.'application/json'.schema
@@ -442,3 +514,56 @@ rules:
         function: length
         functionOptions:
           min: 1
+
+  response-mediatype-success-ok-oas3:
+    severity: error
+    recommended: true
+    description: "Response documents MUST support at least application/json or application/problem+json media types"
+    message: "{{description}} ({{path}})"
+    formats:
+      - oas3
+    extensions:
+      since: 2024-01-01
+      justification: "The absence of required properties does not help developers to understand which parts of the response they can rely on in their code."
+      tags:
+        - model
+        - response
+        - integration
+    given: $.paths.*.*.responses[?( @property == 200 )].content[?(@property.indexOf('json') !== -1 || @property.indexOf('/*') !== -1)]^
+    then:
+      function: truthy
+
+  components-number-of-components:
+    recommended: true
+    description: API should not have more than 100 schema components
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-09-11
+      justification: "An API with too many components becomes difficult to read and use. Its evolution becomes even more problematic. This is frequently a design issue where too many concepts and resources are bundled into one monolithic API."
+      tags:
+        - schema
+        - design
+    given: $.components.schemas
+    then:
+      function: length
+      functionOptions:
+        max: 100
+
+  components-number-of-responses:
+    recommended: true
+    description: API should declare at least 2 shared responses
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-09-11
+      justification: "For consistency, an API should declare its error responses as shared - 400, 401, 404, 500 Error Responses."
+      tags:
+        - schema
+        - design
+        - reuse
+    given: $.components.responses
+    then:
+      function: length
+      functionOptions:
+        min: 2

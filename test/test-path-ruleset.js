@@ -22,6 +22,7 @@ describe('path', function () {
   function checkPathsFound () {
     it('should check paths', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {}
       }
       const expectedPaths = [
@@ -39,6 +40,7 @@ describe('path', function () {
 
     it('should return no error if no path ends with trailing slash', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/valid/path': {}
         }
@@ -48,6 +50,7 @@ describe('path', function () {
 
     it('should return an error if a path ends with a trailing slash', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/invalid/path/': {},
           '/': {}
@@ -69,6 +72,7 @@ describe('path', function () {
 
     it('should return no error if no path contains no query parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/valid/path': {}
         }
@@ -78,6 +82,7 @@ describe('path', function () {
 
     it('should return an error if a path contains a query parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/invalid/path?with=query': {}
         }
@@ -95,6 +100,7 @@ describe('path', function () {
 
     it('should return no error if path is lowerCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/validPath': {},
           '/someValid/path': {},
@@ -110,6 +116,7 @@ describe('path', function () {
 
     it('should return an error if a path is not lowerCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some-invalid/path': {},
           '/some/invalid_path': {},
@@ -134,6 +141,7 @@ describe('path', function () {
 
     it('should return no error if path structure is valid', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {},
           '/pies/{id}': {},
@@ -142,11 +150,15 @@ describe('path', function () {
           '/users/me': {},
           '/users/me/accounts': {},
           '/users/me/accounts/{id}': {},
+          '/users/me/accounts/{id}/subresources': {},
           '/transactions/search': {},
           '/transactions/latest': {},
+          '/clients/{clientId}/cards/{cardId}/{expirationDate}': {},
+          '/clients/{clientId}/cards/{cardId}/{expirationDate}/cardControls': {},
           '/terms/current': {},
           '/users/{id}/parents/me': {},
-          '/accounts/{id}/balances/current': {},
+          '/users/{id}/parents/ME': {}, // this is not beautiful, but the rule only cares about structure and is case insensitive.
+          '/accounts/{accountId}/balances/current': {},
           '/accounts/{id}/transactions/latest': {},
           '/accounts/{id}/transactions/search': {},
           '/v1/customers': {}, // avoiding to trigger error, having basepath in path is checked in basepath ruleset
@@ -158,10 +170,11 @@ describe('path', function () {
 
     it('should return an error if path structure is invalid', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
-          '/collection/something': {},
-          '/collection/something/{id}': {},
-          '/{id}': {}
+          '/collection/something': {}, // invalid because resourcename should be plural
+          '/collection/something/{id}': {}, // invalid because resourcename still not plural
+          '/{id}': {} // invalid because no resourcename to qualify id.
         }
       }
       const errorPaths = [
@@ -171,6 +184,112 @@ describe('path', function () {
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })
+  })
+
+  describe('path-composite-key', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    checkPathsFound()
+
+    it('should return no error if no composite key is found', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources': {},
+          '/pies/{id}': {},
+          '/resources/{id}/pies': {},
+          '/resources/{id}/books/{id}': {},
+          '/users/me': {},
+          '/users/me/accounts': {},
+          '/users/me/accounts/{id}': {},
+          '/users/me/accounts/{id}/subresources': {},
+          '/transactions/search': {},
+          '/transactions/latest': {},
+          '/terms/current': {},
+          '/users/{id}/parents/me': {},
+          '/users/{id}/parents/ME': {}, // this is not beautiful, but the rule only cares about structure and is case insensitive.
+          '/accounts/{accountId}/balances/current': {},
+          '/accounts/{id}/transactions/latest': {},
+          '/accounts/{id}/transactions/search': {},
+          '/v1/customers': {}, // avoiding to trigger error, having basepath in path is checked in basepath ruleset
+          '/name/v1/customers': {} // avoiding to trigger error, having basepath in path is checked in basepath ruleset
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if composite key is found', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/clients/{clientId}/cards/{cardId}/{expirationDate}': {},
+          '/clients/{clientId}/cards/{cardId}/{expirationDate}/cardControls': {}
+        }
+      }
+      const errorPaths = [
+        ['paths', '/clients/{clientId}/cards/{cardId}/{expirationDate}'],
+        ['paths', '/clients/{clientId}/cards/{cardId}/{expirationDate}/cardControls']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('request-support-json-oas3', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.oas3)
+
+    it('should return no error if there is a json content', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/invalid/path/': {
+            post: {
+              requestBody: {
+                content: {
+                  'application/json': {
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if there is no json content', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/invalid/path/': {
+            post: {
+              requestBody: {
+                content: {
+                  'application/xml': {
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', '/some/invalid/path/', 'post', 'requestBody', 'content']
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  /*
+  * @TODO complete tests to improve coverage
+  */
+  describe('path-number-of-sub-resource-levels', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+  })
+
+  describe('path-number-of-paths', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
   })
 
   linterTestSuite.finalize()

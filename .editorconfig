@@ -1,10 +1,15 @@
 [*]
 trim_trailing_whitespace = true
-
-[*.js]
 charset = utf-8
 indent_style = space
+indent_size = 2
+insert_final_newline = true
+
+[*.(js|mjs)]
 indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+
+[Jenkinsfile]
+indent_size = 4

@@ -4,18 +4,36 @@
   "description": "OAS3/Swagger2.0 Rulesets files compliant with BPCE/Natixis API Design guidelines",
   "main": "index.js",
   "scripts": {
-    "test": "standard test/*.js && mocha"
+    "pretest": "npx --yes prettier . --write --config-precedence file-override",
+    "test": "standard \"{rulesets,test}/**/*.{mjs,js}\" && mocha --reporter mocha-junit-reporter",
+    "alltests": "standard --fix \"{rulesets,test}/**/*.{mjs,js}\" && mocha",
+    "infotest": "mocha test/test-info-ruleset.js",
+    "pathtest": "mocha test/test-path-ruleset.js",
+    "modelresponsetest": "mocha test/test-model-response-ruleset.js",
+    "basepathtest": "mocha test/test-basepath-ruleset.js",
+    "datatypestest": "mocha test/test-datatypes-ruleset.js",
+    "httpmethodtest": "mocha test/test-http-method-ruleset.js",
+    "doctest": "mocha test/test-documentation-ruleset.js",
+    "modeltest": "mocha test/test-model-ruleset.js",
+    "arazzotest": "mocha test/test-arazzo-ruleset.js"
   },
   "author": "Groupe BPCE",
   "license": "Apache-2.0",
-  "contributor": ["Arnaud Lauret", "Aurélien Ianni", "Eric Salvan"],
+  "contributor": [
+    "Arnaud Lauret",
+    "Aurélien Ianni",
+    "Eric Salvan"
+  ],
   "devDependencies": {
-    "@stoplight/spectral-core": "^1.6.0",
-    "ajv": "^8.6.3",
-    "jsonpath-plus": "^6.0.1",
-    "mocha": "^9.1.3",
-    "mocha-junit-reporter": "^2.0.2",
-    "standard": "^16.0.1",
+    "@stoplight/spectral-core": "^1.19.4",
+    "@stoplight/spectral-ruleset-bundler": "^1.6.1",
+    "@stoplight/spectral-rulesets": "^1.21.3",
+    "ajv": "^8.17.1",
+    "jsonpath-plus": "^10.2.0",
+    "mocha": "*",
+    "mocha-junit-reporter": "*",
+    "prettier": "3.5.3",
+    "standard": "*",
     "tslib": "^2.3.1"
   },
   "standard": {
@@ -28,6 +46,10 @@
       "afterEach",
       "it",
       "expect"
+    ],
+    "ignore": [
+      "node_modules/**",
+      "rulesets/imported/**"
     ]
   }
 }

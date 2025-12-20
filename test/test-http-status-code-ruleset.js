@@ -20,7 +20,7 @@ const linterTestSuite = require('./common/linter-test-suite.js')
 describe('http-status-code', function () {
   linterTestSuite.initialize()
 
-  describe('http-status-code-mandatory-2xx', function () {
+  describe('operation-success-response', function () {
     linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
 
     it('should return no error if 2xx HTTP status code is used on each operation', async function () {
@@ -63,6 +63,7 @@ describe('http-status-code', function () {
 
     it('should return an error if a 2xx HTTP status code is missing', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -107,6 +108,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 401 HTTP status code is used on each operation', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -189,6 +191,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 500 HTTP status code is used on each operation', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -226,6 +229,7 @@ describe('http-status-code', function () {
 
     it('should return an error if a 500 HTTP status code is missing', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -270,6 +274,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 404 is returned on operation on resource having path parameters', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/with/path/{param}/somewhere': {
             post: {
@@ -285,6 +290,7 @@ describe('http-status-code', function () {
 
     it('should return no error if no 404 is returned on operation on resource having no path parameters', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -298,6 +304,7 @@ describe('http-status-code', function () {
 
     it('should return an error if 404 is missing on operation on resource having path parameters', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/with/path/{param}/somewhere': {
             post: {
@@ -321,6 +328,7 @@ describe('http-status-code', function () {
 
     it('should return no error if no 404 is returned on operation on resource having no path parameters', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/without/path/param': {
             post: {
@@ -334,6 +342,7 @@ describe('http-status-code', function () {
 
     it('should return no error if a 404 is returned on operation on resource having a path parameters', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/{with}/path/param': {
             post: {
@@ -349,6 +358,7 @@ describe('http-status-code', function () {
 
     it('should return an error if 404 is returned on operation on resource having no path parameters', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/without/path/param': {
             post: {
@@ -371,6 +381,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 400 is returned on operation with query, body or header parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -389,6 +400,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 400 is returned on operation with body parameter in oas2 document', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -407,6 +419,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 400 is returned on operation with request body in oas3 document', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -423,6 +436,7 @@ describe('http-status-code', function () {
 
     it('should return no error if 400 is returned on operation with header parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -441,6 +455,7 @@ describe('http-status-code', function () {
 
     it('should return no error if no 400 is returned on operation without query, body or header parameter but with path one', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/{param}/path': {
             post: {
@@ -457,6 +472,7 @@ describe('http-status-code', function () {
 
     it('should return no error if no 400 is returned on operation with empty parameters list', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -471,6 +487,7 @@ describe('http-status-code', function () {
 
     it('should return no error if no 400 is returned on operation without any parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -484,6 +501,7 @@ describe('http-status-code', function () {
 
     it('should return an error if no 400 is returned on operation with query parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -505,6 +523,7 @@ describe('http-status-code', function () {
 
     it('should return an error if no 400 is returned on operation with body parameter in oas2 document', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -526,6 +545,7 @@ describe('http-status-code', function () {
 
     it('should return an error if no 400 is returned on operation with request body in oas3 document', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -544,6 +564,7 @@ describe('http-status-code', function () {
 
     it('should return an error if no 400 is returned on operation with header parameter', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -569,6 +590,7 @@ describe('http-status-code', function () {
 
     it('should return no error if get returns allowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -578,6 +600,7 @@ describe('http-status-code', function () {
                 401: {},
                 403: {},
                 404: {},
+                429: {},
                 500: {},
                 503: {}
               }
@@ -590,6 +613,7 @@ describe('http-status-code', function () {
 
     it('should return no error if other HTTP method returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/put': {
             put: {
@@ -618,6 +642,7 @@ describe('http-status-code', function () {
 
     it('should return an error if get returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -643,11 +668,107 @@ describe('http-status-code', function () {
     })
   })
 
+  describe('http-status-code-get-no-400-on-unitary-resource', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return an error if 400 is return on unitary resource', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/{id}': {
+            get: {
+              responses: {
+                200: {},
+                400: {}
+              }
+            }
+          },
+          '/some/stuff/me': {
+            get: {
+              responses: {
+                200: {},
+                400: {}
+              }
+            }
+          },
+          '/some/stuff/last': {
+            get: {
+              responses: {
+                200: {},
+                400: {}
+              }
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', '/some/path/{id}', 'get', 'responses', '400'],
+        ['paths', '/some/stuff/me', 'get', 'responses', '400'],
+        ['paths', '/some/stuff/last', 'get', 'responses', '400']
+      ]
+
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+
+    it('should return no error if 400 is not return on unitary resource', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            get: {
+              responses: {
+                400: {}
+              }
+            }
+          }
+        }
+      }
+
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return no error if 400 on unitary resource is not a GET operation', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/{id}': {
+            post: {
+              responses: {
+                400: {}
+              }
+            }
+          }
+        }
+      }
+
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return no error if 400 it is not a unitary resource', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/{id}/path': {
+            get: {
+              responses: {
+                200: {},
+                400: {}
+              }
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+  })
+
   describe('http-status-code-put', function () {
     linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
 
     it('should return no error if put returns allowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             put: {
@@ -657,6 +778,7 @@ describe('http-status-code', function () {
                 401: {},
                 403: {},
                 404: {},
+                429: {},
                 500: {},
                 503: {}
               }
@@ -669,6 +791,7 @@ describe('http-status-code', function () {
 
     it('should return no error if other HTTP method returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/get': {
             get: {
@@ -697,6 +820,7 @@ describe('http-status-code', function () {
 
     it('should return an error if put returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             put: {
@@ -727,6 +851,7 @@ describe('http-status-code', function () {
 
     it('should return no error if patch returns allowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             patch: {
@@ -736,6 +861,7 @@ describe('http-status-code', function () {
                 401: {},
                 403: {},
                 404: {},
+                429: {},
                 500: {},
                 503: {}
               }
@@ -748,6 +874,7 @@ describe('http-status-code', function () {
 
     it('should return no error if other HTTP method returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/post': {
             post: {
@@ -774,6 +901,7 @@ describe('http-status-code', function () {
 
     it('should return an error if patch returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             patch: {
@@ -802,16 +930,17 @@ describe('http-status-code', function () {
 
     it('should return no error if delete returns allowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             delete: {
               responses: {
                 200: {},
                 204: {},
-                400: {},
                 401: {},
                 403: {},
                 404: {},
+                429: {},
                 500: {},
                 503: {}
               }
@@ -824,6 +953,7 @@ describe('http-status-code', function () {
 
     it('should return no error if other HTTP method returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/get': {
             get: {
@@ -850,12 +980,14 @@ describe('http-status-code', function () {
 
     it('should return an error if delete returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             delete: {
               responses: {
                 201: {},
                 202: {},
+                400: {},
                 428: {}
               }
             }
@@ -865,6 +997,7 @@ describe('http-status-code', function () {
       const errorPaths = [
         ['paths', '/some/path', 'delete', 'responses', '201'],
         ['paths', '/some/path', 'delete', 'responses', '202'],
+        ['paths', '/some/path', 'delete', 'responses', '400'],
         ['paths', '/some/path', 'delete', 'responses', '428']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.error
@@ -878,6 +1011,7 @@ describe('http-status-code', function () {
 
     it('should return no error if post returns allowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -889,6 +1023,7 @@ describe('http-status-code', function () {
                 401: {},
                 403: {},
                 404: {},
+                429: {},
                 500: {},
                 503: {}
               }
@@ -901,6 +1036,7 @@ describe('http-status-code', function () {
 
     it('should return no error if other HTTP method returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/get': {
             get: {
@@ -925,6 +1061,7 @@ describe('http-status-code', function () {
 
     it('should return an error if post returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -951,6 +1088,7 @@ describe('http-status-code', function () {
 
     it('should return no error if post /search returns allowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/search': {
             post: {
@@ -960,6 +1098,7 @@ describe('http-status-code', function () {
                 401: {},
                 403: {},
                 404: {},
+                429: {},
                 500: {},
                 503: {}
               }
@@ -972,6 +1111,7 @@ describe('http-status-code', function () {
 
     it('should return no error if non post /search returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/post': {
             post: {
@@ -1006,6 +1146,7 @@ describe('http-status-code', function () {
 
     it('should return an error if post /search returns unallowed HTTP status codes', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/search': {
             post: {
@@ -1036,6 +1177,7 @@ describe('http-status-code', function () {
 
     it('should return no error if post /search returns 200 HTTP status code', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path/search': {
             post: {
@@ -1051,8 +1193,9 @@ describe('http-status-code', function () {
 
     it('should return no error if post non /search returns 201 or 202 HTTP status code', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
-          '/some/path/search': {
+          '/some/path': {
             post: {
               responses: {
                 201: {},
@@ -1067,6 +1210,7 @@ describe('http-status-code', function () {
 
     it('should return no error if any other non post operation returns 200 HTTP status code', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             put: {
@@ -1087,8 +1231,9 @@ describe('http-status-code', function () {
       await this.linterTester.runAndCheckNoError(document)
     })
 
-    it('should return an error (info) if post non /search returns 200 HTTP status code', async function () {
+    it('should return an error if post non /search returns 200 HTTP status code', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             post: {
@@ -1100,7 +1245,326 @@ describe('http-status-code', function () {
         }
       }
       const errorPaths = ['paths', '/some/path', 'post', 'responses', '200']
-      const errorSeverity = linterTestSuite.SEVERITY.info
+      const errorSeverity = linterTestSuite.SEVERITY.error
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-length', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId is absent', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            post: {
+              responses: {
+                200: {}
+              }
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return no error if operationId has a length smaller than 100', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/search': {
+            post: {
+              operationId: 'myOperationId',
+              responses: {
+                202: {}
+              }
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId has more than 100 chars', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            post: {
+              operationId: 'Abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890',
+              responses: {
+                200: {}
+              }
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'post', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            post: {
+              operationId: 'createSomething'
+            },
+            get: {
+              operationId: 'deleteSomething'
+            },
+            put: {
+              operationId: 'searchSomething'
+            },
+            patch: {
+              operationId: 'getSomething'
+            },
+            delete: {
+              operationId: 'deleteSomething'
+            }
+          },
+          '/some/path/search': {
+            post: {
+              operationId: 'searchSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not comply with naming convention', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            post: {
+              operationId: 'Abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'post', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-get-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            get: {
+              operationId: 'getSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not begin with get', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            get: {
+              operationId: 'createSomething'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'get', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-delete-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            delete: {
+              operationId: 'deleteSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not begin with delete', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            delete: {
+              operationId: 'createSomething'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'delete', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-put-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            put: {
+              operationId: 'updateSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not begin with update', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            put: {
+              operationId: 'createSomething'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'put', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-patch-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            patch: {
+              operationId: 'updateSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not begin with update', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            patch: {
+              operationId: 'createSomething'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'patch', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-post-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/': {
+            post: {
+              operationId: 'createSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not begin with create', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path': {
+            post: {
+              operationId: 'getSomething'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path', 'post', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('operation-operationId-post-search-format', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should return no error if operationId follows the overall pattern', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/search': {
+            post: {
+              operationId: 'searchSomething'
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if operationId does not begin with search', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/some/path/search': {
+            post: {
+              operationId: 'createSomething'
+            }
+          }
+        }
+      }
+      const errorPaths = ['paths', '/some/path/search', 'post', 'operationId']
+      const errorSeverity = linterTestSuite.SEVERITY.warn
 
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })

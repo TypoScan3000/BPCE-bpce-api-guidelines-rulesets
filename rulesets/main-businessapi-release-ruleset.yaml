@@ -1,0 +1,76 @@
+﻿#
+# Copyright 2019-2022 Groupe BPCE
+#
+# Licensed under the Apache License, Version 2.0 (the License);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an AS IS BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+extends:
+  - ./main-ruleset.yaml
+  - ./documentation-ruleset.yaml
+  - ./public-api-ruleset.yaml
+  - ./extensions-ruleset.yaml
+
+rules:
+  oas3-schema: error
+  oas2-schema: error
+  operation-operationId: error
+  operation-operationId-unique: error
+  operation-operationId-valid-in-url: error
+  operation-parameters: error
+  operation-success-response: error
+  path-params: error
+  duplicated-entry-in-enum: error
+  typed-enum: error
+
+  ## Since the public dns name for Biz APIs is api.groupebpce.com and contains the word 'api' the following rule is no longer relevant in this context.
+  basepath-no-api: off
+  ## The security-types-authorized rule from security-ruleset is disabled to be replaced by two complementary rules defined in public-api-ruleset
+  ## to compensate
+  security-types-authorized: off
+  ##
+  ## The security-no-api-level from security-ruleset is disabled since we have the private 'leg' of the API using global JWT Grant access.
+  ## It is replaced by a rule in public-api-ruleset that applies the check conditionally, when no x-private tag is present.
+  security-no-api-level: off
+  ## The rule below is provided by Spectral and guarantees that a security points to a valid scheme.
+  oas3-operation-security-defined: error
+## The rule below ensures that server variables are valid, used and URL compatible.
+##  oas3-server-variables: error (does not work in VSCode old spectral plugin)
+
+## Overrides can only downgrade an error rule to warning - turning
+## a rule off is considered bad practice as it provides no visibility.
+## APIs for which an exception is granted should treat as many warnings
+## as possible upon version upgrade.
+overrides:
+  - files:
+      - "**stetpsd2api-*.json"
+    rules:
+      datatypes-upper-case-enums: warn
+      model-empty-required: warn
+      http-status-code-post: warn
+      http-status-code-put: warn
+      http-status-code-get: warn
+      http-status-code-404-when-path-parameters: warn
+      http-status-code-no-404-when-no-path-parameters: warn
+      http-status-code-400-operation-level-query-body-header-param: warn
+      response-schema-is-not-defined-for-204-or-3xx: warn
+      response-schema-is-defined-oas3: warn
+      path-lower-camel-case: warn
+      path-valid-structure: warn
+      parameter-query-path-body-name-lowercamelcase: warn
+      parameter-query-forbidden-on-post-put-patch-delete: warn
+      parameter-header-authorized-name: warn
+      basepath-valid-structure: warn
+      info-version: warn
+      docs-tags: warn
+      docs-model-example: warn
+      property-name-lowercamelcase: warn

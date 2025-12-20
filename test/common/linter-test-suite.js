@@ -20,13 +20,21 @@ const path = require('@stoplight/path')
 
 const FINALIZE_RULESET = 'ruleset test suite complete'
 
+/**
+ * Warning: in this context, 'all' is supposed to mean all oas formats - if arazzo
+ * is included this creates a huge mess.
+ */
 const TESTER_FORMATS = {
   oas2: FORMATS.oas2,
   oas3: FORMATS.oas3,
+  oas30: FORMATS.oas30,
+  oas31: FORMATS.oas31,
+  arazzo1: FORMATS.arazzo1,
   all: 'all'
 }
 
 // Rulesets file paths are expected to be GIT_REPO/rulesets/{name}-ruleset.yaml
+// This assumption is completely false as soon as you incorporate Javascript spectral files.
 async function loadRuleset (name, oasFormat) {
   const spectral = new SpectralTestWrapper(oasFormat)
   await spectral.loadRuleset(path.join(__dirname, '../../rulesets/' + name + '-ruleset.yaml'))
@@ -74,7 +82,6 @@ exports.initialize = function () {
 
   // Loads ruleset file based on the ruleset name set in the ruleset level test suite describe('{ruleset name}')
   before(async function () {
-    this.skip()
     linterTester = await loadRuleset(ruleset(this))
     ruleTestsReport = {}
     const linterTesterRules = linterTester.listRuleNames()
@@ -97,22 +104,25 @@ exports.initialize = function () {
 }
 
 exports.commonTests = function (format, standardSpectralRule) {
-  it('should run on', function () {
-    this.ruleTestsReport[this.rule].commonTests = true
-    if (format === undefined) {
-      throw new Error('Missing format when calling ruleInitialize, oas2, oas3 or all value must be provided')
-    }
-    if (format.localeCompare(TESTER_FORMATS.oas2) === 0 || format.localeCompare(TESTER_FORMATS.oas3) === 0) {
-      this._runnable.title = 'should run only on ' + format + ' document'
+  if (format === undefined) {
+    throw new Error('Missing format when calling ruleInitialize, oas2, oas3, oas31, arazzo1 or all value must be provided')
+  }
+  if (format.localeCompare(TESTER_FORMATS.oas2) === 0 || format.localeCompare(TESTER_FORMATS.oas3) === 0 || format.localeCompare(TESTER_FORMATS.oas30) === 0 || format.localeCompare(TESTER_FORMATS.oas31) === 0 || format.localeCompare(TESTER_FORMATS.arazzo1) === 0) {
+    // name test case based on format as explain in the Mocha documentation
+    // it avoid problem when Mocha Test Explorer discover the test
+    it(`should run only on ${format} document`, function () {
+      this.ruleTestsReport[this.rule].commonTests = true
       const disableNameCheck = standardSpectralRule
       this.linterTester.checkRunOnlyOn(format, disableNameCheck)
-    } else if (format.localeCompare(TESTER_FORMATS.all) === 0) {
-      this._runnable.title = 'should run on any document'
+    })
+  } else if (format.localeCompare(TESTER_FORMATS.all) === 0) {
+    it('should run on any document', function () {
+      this.ruleTestsReport[this.rule].commonTests = true
       this.linterTester.checkAlwaysRun()
-    } else {
-      throw new Error('Unexpected format provided to ruleInitialize, only oas2, oas3 or all value allowed')
-    }
-  })
+    })
+  } else {
+    throw new Error('Unexpected format provided to ruleInitialize, only oas2, oas3, oas30, oas31, arazzo1 or all value allowed')
+  }
 }
 
 exports.finalize = function () {

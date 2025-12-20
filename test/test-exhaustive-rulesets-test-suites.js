@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-
-
 const assert = require('assert')
 const path = require('path')
 const fs = require('fs')
 
 // Check that a test file exists for all rule sets
+// Note that we will not pull out Javascript files, we assume that
+// there is always a yaml file to import them
 describe('exhaustive rulesets test suites', function () {
   it('should exist a test file for each ruleset', function () {
     const rulesetsFolder = path.join(__dirname, '..', 'rulesets')
     const rulesets = fs.readdirSync(rulesetsFolder)
     const untestedRulesets = []
     for (const ruleset in rulesets) {
-      const rulesetTestPath = path.join(__dirname, 'test-' + rulesets[ruleset].slice(0, rulesets[ruleset].length - 5) + '.js')
-      if (!fs.existsSync(rulesetTestPath)) {
-        untestedRulesets.push(rulesets[ruleset])
+      // Only include a file that ends with yaml - the JS files are not
+      // to be tested directly but via an importing yaml.
+      if (rulesets[ruleset].indexOf('.yaml') !== -1) {
+        const rulesetTestPath = path.join(__dirname, 'test-' + rulesets[ruleset].slice(0, rulesets[ruleset].indexOf('.yaml')) + '.js')
+        if (!fs.existsSync(rulesetTestPath)) {
+          untestedRulesets.push(rulesets[ruleset])
+        }
       }
     }
     assert.deepStrictEqual(untestedRulesets, [], 'untested rulesets')

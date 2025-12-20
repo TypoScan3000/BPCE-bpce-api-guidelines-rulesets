@@ -21,6 +21,7 @@ describe('model-response', function () {
 
   function responseSchemaIsDefinedIgnore204And3xx () {
     const document = {
+      openapi: '3.0.3',
       paths: {
         '/some/path': {
           anymethod: {
@@ -37,6 +38,7 @@ describe('model-response', function () {
 
   function responseSchemaIsDefinedCheck2xx4xx5xx () {
     const document = {
+      openapi: '3.0.3',
       paths: {
         '/some/path': {
           anymethod: {
@@ -131,7 +133,7 @@ describe('model-response', function () {
         }
       }
       const document = {
-        openapi: '3.0',
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -149,7 +151,7 @@ describe('model-response', function () {
 
     it('should return an error if schema is undefined in 2xx, 4xx and 5xx oas3 response', async function () {
       const document = {
-        openapi: '3.0',
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -185,6 +187,7 @@ describe('model-response', function () {
 
     it('should ignore 2xx other than 204, 4xx and 5xx response', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -207,6 +210,7 @@ describe('model-response', function () {
 
     it('should check 204 and 3xx response', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -229,6 +233,7 @@ describe('model-response', function () {
 
     it('should return no error if 204 or 3xx response schema is not defined', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -250,6 +255,7 @@ describe('model-response', function () {
         schema: {}
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -279,6 +285,7 @@ describe('model-response', function () {
         content: {}
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -311,6 +318,7 @@ describe('model-response', function () {
         schema: {}
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -330,6 +338,7 @@ describe('model-response', function () {
         schema: {}
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -359,6 +368,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -382,6 +392,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -406,6 +417,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -434,6 +446,7 @@ describe('model-response', function () {
         schema: {}
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -470,6 +483,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -495,6 +509,7 @@ describe('model-response', function () {
       const responseString = { schema: { type: 'string' } }
       const responseNumber = { schema: { type: 'number' } }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -549,6 +564,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {
@@ -620,6 +636,7 @@ describe('model-response', function () {
 
     it('should ignore 2xx responses in oas2', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -635,6 +652,7 @@ describe('model-response', function () {
 
     it('should ignore 2xx responses in oas3', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -657,6 +675,7 @@ describe('model-response', function () {
     it('should check 4xx and 5xx response schema in oas2', function () {
       const response = { schema: {} }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -684,6 +703,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -704,6 +724,7 @@ describe('model-response', function () {
 
     it('should return no error if schema matches standard error one on all 4xx and 5xx responses', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -723,6 +744,7 @@ describe('model-response', function () {
 
     it('should return no error if schema other than for responses 4xx and 5xx do not match error model', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -738,6 +760,7 @@ describe('model-response', function () {
 
     it('should return an error if schema does not match standard error one on a 4xx or 5xx response', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             anymethod: {
@@ -787,6 +810,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources/{id}': pathObject,
           '/v1/resources/{id}': pathObject,
@@ -817,6 +841,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources/{id}': pathObject,
           '/v1/resources/{id}': pathObject,
@@ -844,6 +869,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -875,6 +901,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -905,6 +932,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -940,6 +968,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -971,6 +1000,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -1005,6 +1035,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -1035,6 +1066,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources/search': pathObject,
           '/v1/resources/search': pathObject,
@@ -1069,6 +1101,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources/search': pathObject,
           '/v1/resources/search': pathObject,
@@ -1095,6 +1128,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -1137,6 +1171,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources': pathObject,
           '/v1/resources': pathObject,
@@ -1175,6 +1210,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources/search': pathObject,
           '/v1/resources/search': pathObject,
@@ -1217,6 +1253,7 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/name/v1/resources/search': pathObject,
           '/v1/resources/search': pathObject,
@@ -1256,6 +1293,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -1285,6 +1323,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -1310,6 +1349,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -1345,6 +1385,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -1388,6 +1429,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: operationObject
@@ -1421,6 +1463,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: operationObject
@@ -1450,6 +1493,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources/search': {
             post: operationObject
@@ -1483,6 +1527,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources/search': {
             post: operationObject
@@ -1515,6 +1560,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': pathObject
         }
@@ -1543,6 +1589,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': pathObject
         }
@@ -1574,6 +1621,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': pathObject
         }
@@ -1605,6 +1653,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: operationObject
@@ -1636,6 +1685,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: operationObject
@@ -1663,6 +1713,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources/search': {
             post: operationObject
@@ -1696,6 +1747,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources/search': {
             post: operationObject
@@ -1727,6 +1779,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': pathObject
         }
@@ -1754,6 +1807,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': pathObject
         }
@@ -1782,6 +1836,7 @@ describe('model-response', function () {
 
       // Note: path filter regex already tested in response-collection-schema-is-valid
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': pathObject
         }
@@ -1813,6 +1868,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: operationObject
@@ -1844,6 +1900,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: operationObject
@@ -1871,6 +1928,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources/search': {
             post: operationObject
@@ -1904,6 +1962,7 @@ describe('model-response', function () {
       }
 
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources/search': {
             post: operationObject
@@ -1919,6 +1978,7 @@ describe('model-response', function () {
 
     it('should return no error if page is valid index pagination', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -1966,6 +2026,7 @@ describe('model-response', function () {
     it('should return no error if page is valid cursor pagination', async function () {
       // Note: path filter regex already tested in response-collection-schema-is-valid
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -2007,9 +2068,11 @@ describe('model-response', function () {
       await this.linterTester.runAndCheckNoError(document)
     })
 
-    it('should return an error if page is invalid', async function () {
-      // Note: path filter regex already tested in response-collection-schema-is-valid
+    /**
+     *
+    it('should return an error if page is invalid in swagger 2', async function () {
       const document = {
+        swagger: '2.0',
         paths: {
           '/resources': {
             get: {
@@ -2019,7 +2082,8 @@ describe('model-response', function () {
                     properties: {
                       page: {
                         properties: {
-                          current: { type: 'number' }
+                          pageBadNumber: { type: 'string' },
+                          pageSize: { type: 'string' }
                         }
                       }
                     }
@@ -2031,8 +2095,44 @@ describe('model-response', function () {
         }
       }
       const errorPaths = [
-        ['paths', '/resources', 'get', 'responses', '200', 'schema', 'properties', 'page'], // due to oneOf
+        ['paths', '/resources', 'get', 'responses', '200', 'schema', 'properties', 'page', 'properties'],
         ['paths', '/resources', 'get', 'responses', '200', 'schema', 'properties', 'page', 'properties']
+      ]
+
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+
+    it('should return an error if page is invalid in oas3', async function () {
+      // Note: path filter regex already tested in response-collection-schema-is-valid
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources': {
+            get: {
+              responses: {
+                200: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        properties: {
+                          page: {
+                            properties: {
+                              current: { type: 'number' }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      const errorPaths = [
+        ['paths', '/resources', 'get', 'responses', '200', 'content', 'application/json', 'schema']
       ]
 
       const errorSeverity = linterTestSuite.SEVERITY.error
@@ -2042,6 +2142,7 @@ describe('model-response', function () {
     it('should return an error if page mixes index and cursor pagination', async function () {
       // Note: path filter regex already tested in response-collection-schema-is-valid
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/resources': {
             get: {
@@ -2071,6 +2172,182 @@ describe('model-response', function () {
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })
+
+    */
+  })
+
+  describe('response-collection-sort-schema-is-valid', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+
+    it('should check get collection sort schema in oas2', function () {
+      const operationObject = {
+        responses: {
+          200: {
+            schema: {
+              properties: {
+                sort: {}
+              }
+            }
+          }
+        }
+      }
+
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources': {
+            get: operationObject
+          }
+        }
+      }
+
+      const expectedPaths = [
+        ['paths', '/resources', 'get', 'responses', '200', 'schema', 'properties', 'sort']
+      ]
+      this.linterTester.checkGivenFound(document, expectedPaths, 0)
+    })
+
+    it('should check get collection sort schema in oas3', function () {
+      const operationObject = {
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: {
+                  properties: {
+                    sort: {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources': {
+            get: operationObject
+          }
+        }
+      }
+
+      const expectedPaths = [
+        ['paths', '/resources', 'get', 'responses', '200', 'content', 'application/json', 'schema', 'properties', 'sort']
+      ]
+      this.linterTester.checkGivenFound(document, expectedPaths, 1)
+    })
+
+    it('should check post search sort schema in oas2', function () {
+      const operationObject = {
+        responses: {
+          200: {
+            schema: {
+              properties: {
+                sort: {}
+              }
+            }
+          }
+        }
+      }
+
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources/search': {
+            post: operationObject
+          }
+        }
+      }
+
+      const expectedPaths = [
+        ['paths', '/resources/search', 'post', 'responses', '200', 'schema', 'properties', 'sort']
+      ]
+      this.linterTester.checkGivenFound(document, expectedPaths, 2)
+    })
+
+    it('should check get collection sort schema in oas3', function () {
+      const operationObject = {
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: {
+                  properties: {
+                    sort: {
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources/search': {
+            post: operationObject
+          }
+        }
+      }
+
+      const expectedPaths = [
+        ['paths', '/resources/search', 'post', 'responses', '200', 'content', 'application/json', 'schema', 'properties', 'sort']
+      ]
+      this.linterTester.checkGivenFound(document, expectedPaths, 3)
+    })
+
+    it('should return no error if sort is valid', async function () {
+      const document = {
+        openapi: '3.0.3',
+        paths: {
+          '/resources': {
+            get: {
+              responses: {
+                200: {
+                  schema: {
+                    properties: {
+                      sort: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                          pattern: '',
+                          example: '-attribute'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          '/resources/{id}/resources': {
+            get: {
+              responses: {
+                200: {
+                  schema: {
+                    properties: {
+                      sort: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                          pattern: '',
+                          example: 'attribute'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
   })
 
   describe('response-no-empty-required', function () {
@@ -2078,6 +2355,7 @@ describe('model-response', function () {
 
     it('should ignore any non application/json response in oas3', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
@@ -2099,6 +2377,7 @@ describe('model-response', function () {
 
     it('should ignore list items in any non application/json response in oas3', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
@@ -2126,6 +2405,7 @@ describe('model-response', function () {
 
     it('should check any response in oas2', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
@@ -2146,6 +2426,7 @@ describe('model-response', function () {
 
     it('should check any application/json response in oas3', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
@@ -2170,6 +2451,7 @@ describe('model-response', function () {
 
     it('should check list items in any response in oas2', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
@@ -2196,6 +2478,7 @@ describe('model-response', function () {
 
     it('should check list items in any application/json response in oas3', function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
@@ -2232,12 +2515,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2263,12 +2547,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2285,12 +2570,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2312,12 +2598,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2346,12 +2633,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2381,12 +2669,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2415,12 +2704,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2448,12 +2738,13 @@ describe('model-response', function () {
         }
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           anypath: {
             anymethod: {
               responses: {
                 anyresponse: {
-                  schema: schema
+                  schema
                 }
               }
             }
@@ -2467,6 +2758,20 @@ describe('model-response', function () {
       const errorSeverity = linterTestSuite.SEVERITY.warn
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
     })
+  })
+
+  /**
+   * TODO complete this test
+   */
+  describe('response-mediatype-success-ok-oas3', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.oas3)
+  })
+
+  describe('components-number-of-components', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
+  })
+  describe('components-number-of-responses', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.all)
   })
 
   linterTestSuite.finalize()

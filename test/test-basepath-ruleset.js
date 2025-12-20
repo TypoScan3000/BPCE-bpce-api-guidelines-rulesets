@@ -111,11 +111,11 @@ describe('basepath', function () {
 
     it('should return no error if base path has a valid structure', async function () {
       const document = {
+        openapi: '3.0.3',
         servers: [
           { url: '/name/v1' },
           { url: '/someName/v1' },
-          { url: '/some_name/v22' },
-          { url: '/some-name/v234' },
+          { url: '/domainname/name/v1' },
           { url: 'http://sldcfrgos942.intranet.fr/bamMonitoring/v2' }
         ]
       }
@@ -124,10 +124,10 @@ describe('basepath', function () {
 
     it('should return an error if base path has invalid structure', async function () {
       const document = {
+        openapi: '3.0.3',
         servers: [
           { url: '/nameWithoutVersion' },
           { url: '/v1' },
-          { url: '/too/many/v1' },
           { url: 'http://sldcfrgos942.intranet.fr/nameWithoutVersion' },
           { url: 'http://sldcfrgos942.intranet.fr/v2' }
         ]
@@ -135,9 +135,7 @@ describe('basepath', function () {
       const errorPaths = [
         ['servers', '0', 'url'],
         ['servers', '1', 'url'],
-        ['servers', '2', 'url'],
-        ['servers', '3', 'url'],
-        ['servers', '4', 'url']
+        ['servers', '2', 'url']
       ]
       const errorSeverity = linterTestSuite.SEVERITY.error
 
@@ -152,6 +150,7 @@ describe('basepath', function () {
 
     it('should not return no error if base path is lowerCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         servers: [
           { url: '/lowerCamelCased' },
           { url: '/lower' },
@@ -165,6 +164,7 @@ describe('basepath', function () {
 
     it('should return an error if base path is not lowerCamelCased', async function () {
       const document = {
+        openapi: '3.0.3',
         servers: [
           { url: '/NotLowerCamelCased' },
           { url: '/Not' },
@@ -191,6 +191,7 @@ describe('basepath', function () {
 
     it('should return no error if basepath has no trailing slash', async function () {
       const document = {
+        swagger: '2.0',
         basePath: '/no-trailing-slash'
       }
       await this.linterTester.runAndCheckNoError(document)
@@ -198,6 +199,7 @@ describe('basepath', function () {
 
     it('should return an error if basepath has a trailing slash', async function () {
       const document = {
+        swagger: '2.0',
         basePath: '/forbidden-trailing-slash/'
       }
       const errorPaths = ['basePath']
@@ -208,6 +210,7 @@ describe('basepath', function () {
 
     it('should return an error if basepath is just slash', async function () {
       const document = {
+        swagger: '2.0',
         basePath: '/'
       }
       const errorPaths = ['basePath']
@@ -224,6 +227,7 @@ describe('basepath', function () {
 
     it('should return no error if base path does not contain api', async function () {
       const document = {
+        swagger: '2.0',
         basePath: '/some/path'
       }
       await this.linterTester.runAndCheckNoError(document)
@@ -231,6 +235,7 @@ describe('basepath', function () {
 
     it('should return an error if base path contains api', async function () {
       const document = {
+        swagger: '2.0',
         basePath: '/api/path'
       }
       const errorPaths = ['basePath']
@@ -260,6 +265,7 @@ describe('basepath', function () {
 
     it('should return no error if path does not contain basepath', async function () {
       const document = {
+        openapi: '3.0.1',
         paths: {
           '/some/path': {}
         }
@@ -269,6 +275,7 @@ describe('basepath', function () {
 
     it('should return an error if path contains basepath', async function () {
       const document = {
+        openapi: '3.0.1',
         paths: {
           '/someName/v1/some/path': {}
         }
@@ -287,6 +294,7 @@ describe('basepath', function () {
 
     it('should return no error if path does not contain version', async function () {
       const document = {
+        openapi: '3.0.1',
         paths: {
           '/some/path': {}
         }
@@ -296,6 +304,7 @@ describe('basepath', function () {
 
     it('should return an error if path contains version', async function () {
       const document = {
+        openapi: '3.0.1',
         paths: {
           '/v1/some/path': {}
         }

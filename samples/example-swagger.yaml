@@ -10,4 +10,4 @@ paths:
     get:
       summary: Gets some resources
     head:
-      summary: Not allowed!      
+      summary: Not allowed!

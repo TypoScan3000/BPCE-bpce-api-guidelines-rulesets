@@ -1,0 +1,262 @@
+#
+# Copyright 2019-2022 Groupe BPCE
+#
+# Licensed under the Apache License, Version 2.0 (the License);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an AS IS BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+formats: [oas2, oas3]
+
+aliases:
+  Extensions:
+    - "$..*[?(/^x-/.test(@property))]~"
+
+rules:
+  extensions-authorized:
+    recommended: true
+    severity: error
+    description: Only managed extensions are allowed in a contract.
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-03-06
+      justification: "Extensions are used as decorators to serve as transformation indicators, or processing indicators. Their list must therefore be controlled to avoid typos."
+      tags:
+        - decoration
+        - extensions
+        - governance
+    given:
+      - "#Extensions"
+    then:
+      - function: enumeration
+        functionOptions:
+          values:
+            - x-internal
+            - x-public
+            - x-internal-id
+            - x-examples
+            - x-stoplight
+            - x-title
+            - x-business-exposure
+            - x-interop-exposure
+            - x-internal-exposure
+            - x-business-keywords
+            - x-internal-access-level
+            - x-internet-visible
+            - x-domain
+            - x-subdomain
+
+  extensions-unique-id-defined:
+    recommended: true
+    severity: error
+    description: API must declare a valid x-internal-id in the info section
+    message: "{{description}} ({{error}}) ({{path}})"
+    extensions:
+      since: 2025-03-06
+      justification: "For traceability all APIs must be uniquely identified."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info
+    then:
+      - function: truthy
+        field: x-internal-id
+      - function: pattern
+        field: x-internal-id
+        functionOptions:
+          match: "^[a-zA-Z0-9]{1,32}$"
+
+  extensions-exposure-type:
+    recommended: true
+    severity: error
+    description: If present, Exposure extension type must be true
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-03-10
+      justification: "Exposure Extensions are declared as booleans - For simplicity we consider that they must be present only when true."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info['x-interop-exposure']
+      - $.info['x-business-exposure']
+      - $.info['x-internal-exposure']
+      - $.info['x-internet-visible']
+    then:
+      - function: truthy
+      - function: schema
+        functionOptions:
+          schema:
+            type: boolean
+
+  extensions-exposure-required:
+    recommended: true
+    severity: error
+    description: Missing an exposure level tag (x-business-exposure or x-interop-exposure or x-internal-exposure).
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-04-30
+      justification: "With the DA now in charge of Business APIs and Interop, it becomes necessary to explicitly state the exposure level of an API. Use one of the three tags allowed in the info section: x-business-exposure, x-interop-exposure, x-internal-exposure."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info
+    then:
+      - function: schema
+        functionOptions:
+          schema:
+            type: object
+            anyOf:
+              - required:
+                  - x-business-exposure
+              - required:
+                  - x-interop-exposure
+              - required:
+                  - x-internal-exposure
+
+  extensions-interop-requires-xtitle:
+    recommended: true
+    severity: error
+    description: Interop APIs deployed on BAPI Gateways require an x-title tag to serve as a routing key
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-03-10
+      justification: "The BAPI Gateways use the title tag for routing purposes. To support this requirement, We rely on a x-title to carry the value."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info['x-interop-exposure']^
+    then:
+      - function: truthy
+        field: x-title
+
+  extensions-xtitle-format:
+    recommended: true
+    severity: error
+    description: x-title tag must not contain spaces or special characters
+    message: "{{description}} ({{error}}) ({{path}})"
+    extensions:
+      since: 2025-03-10
+      justification: "The BAPI Gateways currently require an x-title that does not contain whitespaces or special characters."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info.'x-title'
+    then:
+      - function: pattern
+        functionOptions:
+          match: "^[a-zA-Z0-9]{1,64}$"
+
+  extensions-business-keywords:
+    recommended: true
+    severity: error
+    description: Business Keywords must be an array of strings with no special characters.
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-03-26
+      justification: "The x-business-keywords is used to provide hints for search engines. It is typed as a list of strings."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info.'x-business-keywords'
+    then:
+      - function: schema
+        functionOptions:
+          schema:
+            type: array
+            minItems: 1
+            items:
+              type: string
+              pattern: "^[a-zA-Z ]+$"
+
+  extensions-domain:
+    recommended: true
+    severity: error
+    description: x-domain extension tag must be a valid value (assetmanagement, cib, leasing, payments, personalinsurance, referentials, retail, wealthmanagement)
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-11-06
+      justification: "The x-domain tag is used to classify all the apis by functional domain"
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info.'x-domain'
+    then:
+      - function: enumeration
+        functionOptions:
+          values:
+            - assetmanagement
+            - cib
+            - leasing
+            - payments
+            - personalinsurance
+            - referentials
+            - retail
+            - wealthmanagement
+
+  extensions-domain-defined:
+    recommended: true
+    severity: warn
+    description: x-domain tag should be present 
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-11-06
+      justification: "The x-domain tag is used to classify all the apis by functional domain - It is good practice to define it explicitly in the contract."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info
+    then:
+      - function: truthy
+        field: 'x-domain'
+
+  extensions-internal-access-level:
+    recommended: true
+    severity: error
+    description: Internal access level must be an uppercase string with optional underscore
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-03-26
+      justification: "The internal access level may be used by all entities to mark visibility restrictions. It is an uppercase string with optional underscore."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info.'x-internal-access-level'
+    then:
+      - function: schema
+        functionOptions:
+          schema:
+            type: string
+            pattern: "^[A-Z_]+$"
+
+  extensions-internal-access-level-implies-internal:
+    recommended: true
+    severity: error
+    description: Internal access level can only be specified if the x-internal-exposure is true.
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2025-03-26
+      justification: "The internal access level extension is applicable only when an API is marked as internal."
+      tags:
+        - governance
+        - extensions
+    given:
+      - $.info['x-internal-access-level']^
+    then:
+      - function: truthy
+        field: x-internal-exposure

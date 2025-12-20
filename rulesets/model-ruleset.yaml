@@ -13,22 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: ["oas2", "oas3"]
+
+extends:
+  - ./model-integrity-ruleset.mjs
+
+aliases:
+  Schemas:
+    - $.definitions
+    - $.components.schemas
+  Properties:
+    - $..properties
 
 rules:
-
   schema-name-uppercamelcase:
     recommended: true
-    description: Definitionname must be in UpperCamelCase
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.definitions
-      - $.components.schemas
     severity: error
-    tags:
-      - model
+    description: Definition name must be in UpperCamelCase
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Consistent naming convention which clearly makes the distinction."
+      tags:
+        - model
+        - style
+    given: "#Schemas"
     then:
       field: "@key"
       # function: casing not working :-(
+      # Pascal casing definition is too strict and does not even accept HTTP approved headers.
+      # The regex that we have used is a slightly relaxed form.
       #functionOption:
       #  type: pascal
       function: pattern
@@ -37,14 +51,16 @@ rules:
 
   schema-name-no-number:
     recommended: true
-    description: Definitionname should not contain number
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.definitions
-      - $.components.schemas
     severity: warn
-    tags:
-      - model
+    description: Definition name should not contain number
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Ensuring sufficient effort is made to name types appropriately."
+      tags:
+        - model
+        - style
+    given: "#Schemas"
     then:
       field: "@key"
       function: pattern
@@ -53,14 +69,16 @@ rules:
 
   schema-name-no-technical-prefix-suffix:
     recommended: true
-    description: Definitionname must not contain technical suffix or prefix
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.definitions
-      - $.components.schemas
     severity: error
-    tags:
-      - model
+    description: Definition name must not contain technical suffix or prefix
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Ensuring sufficient effort is made to name types appropriately."
+      tags:
+        - model
+        - style
+    given: "#Schemas"
     then:
       - field: "@key"
         function: pattern
@@ -71,14 +89,35 @@ rules:
         functionOptions:
           notMatch: "/^dtos?.*$/i"
 
+  schema-no-type-declaration:
+    recommended: true
+    severity: error
+    description: Schema declaration missing type
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-10-24
+      justification: "The type field is mandatory in a schema declaration"
+      tags:
+        - model
+        - integrity
+    given: "#Schemas[*]"
+    then:
+      - field: "type"
+        function: truthy
+
   property-name-lowercamelcase:
     recommended: true
-    description: Property name must be in lowerCamelCase or be _links
-    message: '{{description}} ({{path}})'
-    given: $..properties
     severity: error
-    tags:
-      - property
+    description: Property name must be in lowerCamelCase or be _links
+    message: "{{description}} {{path}}"
+    extensions:
+      since: 2024-01-01
+      justification: "Naming convention for properties in line with internal practices."
+      tags:
+        - model
+        - style
+        - property
+    given: "#Properties"
     then:
       - field: "@key"
         function: pattern
@@ -87,25 +126,54 @@ rules:
 
   property-name-no-number:
     recommended: true
-    description: Property name should not contain numbers
-    message: '{{description}} ({{path}})'
-    given: $..properties
     severity: warn
+    description: Property name should not contain numbers
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Ensuring sufficient effort is made to find meaningful terms for properties."
+      tags:
+        - model
+        - style
+        - property
+    given: "#Properties"
     resolved: false
     then:
       - field: "@key"
         function: pattern
         functionOptions:
           notMatch: "/[0-9]+/i"
-    tags:
-      - property
+
+  property-bad-ref:
+    recommended: true
+    severity: error
+    description: "Integrity issue : Bad reference, should be $ref"
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Manual modification of schema files may inadvertently use ref instead of $ref and cause silent errors."
+      tags:
+        - model
+        - integrity
+        - reference
+    given: "#Properties[*]"
+    then:
+      - field: "ref"
+        function: falsy
 
   property-name-no-technical-prefix-suffix:
     recommended: true
-    description: Property name must not use technical prefix or suffix
-    message: '{{description}} ({{path}})'
-    given: $..properties
     severity: error
+    description: Property name must not use technical prefix or suffix
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Ensuring sufficient effort is made to find meaningful terms for properties."
+      tags:
+        - model
+        - style
+        - property
+    given: "#Properties"
     then:
       - field: "@key"
         function: pattern
@@ -115,19 +183,18 @@ rules:
         function: pattern
         functionOptions:
           notMatch: "/^dtos?.*$/i"
-    tags:
-      - property
 
   model-empty-required:
     recommended: true
-    description: "A schema (definition) without any required properties is suspicious (but it can be normal)"
-    message: '{{description}} ({{path}})'
+    description: "An object schema definition without any required properties is suspicious."
+    message: "{{description}} ({{path}})"
     severity: info
-    tags:
-      - model
-    given: 
-      - $.definitions.*
-      - $.components.schemas.*
+    extensions:
+      since: 2024-01-01
+      justification: "Object Models without required properties provide too little guidance to developers on what properties they can rely on. Note that this rule excludes models using allOf/anyOf/oneOf for complexity reasons."
+      tags:
+        - model
+    given: '#Schemas[?(@.type=="object" && !(@.allOf || @.oneOf || @.anyOf))]'
     then:
       - field: required
         function: truthy
@@ -135,3 +202,23 @@ rules:
         function: length
         functionOptions:
           min: 1
+
+  model-remove-composition-operator-oas3:
+    formats: ["oas3"]
+    recommended: true
+    description: "A composition operator with only one entry is useless and should be removed."
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2025-02-24
+      justification: "Composition operators like allOf, oneOf, anyOf are useless if they only contain one entry. If this occurs, you can remove them to simplify your design."
+      tags:
+        - model
+    given:
+      - "$.components.schemas..allOf"
+      - "$.components.schemas..anyOf"
+      - "$.components.schemas..oneOf"
+    then:
+      - function: length
+        functionOptions:
+          min: 2

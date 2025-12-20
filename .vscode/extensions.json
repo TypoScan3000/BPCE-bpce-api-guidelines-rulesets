@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "yzhang.markdown-all-in-one",
+    "DavidAnson.vscode-markdownlint",
+    "oderwat.indent-rainbow",
+    "xabikos.JavaScriptSnippets",
+    "standard.vscode-standard",
+    "capaj.vscode-standardjs-snippets",
+    "Orta.vscode-jest",
+    "ms-vscode.test-adapter-converter",
+    "hbenl.vscode-test-explorer",
+    "hbenl.vscode-mocha-test-adapter",
+    "42Crunch.vscode-openapi",
+    "stoplight.spectral"
+  ]
+}

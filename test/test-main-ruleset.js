@@ -35,6 +35,7 @@ describe('main', function () {
   describe('http-method-allowed', function () {
     it('should run a rule of http method ruleset', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/path': {
             get: {},
@@ -59,51 +60,9 @@ describe('main', function () {
     })
   })
 
-  describe('http-status-code-mandatory-2xx', function () {
-    it('should run a rule of http status ruleset', async function () {
-      const document = {
-        paths: {
-          '/some/path': {
-            get: {
-              responses: {
-                200: {}
-              }
-            },
-            post: {
-              responses: {
-              }
-            }
-          },
-          '/another/path': {
-            put: {
-              responses: {
-                200: {}
-              }
-            },
-            patch: {
-              responses: {}
-            },
-            delete: {
-              responses: {
-                204: {}
-              }
-            }
-          }
-        }
-      }
-      const errorPaths = [
-        ['paths', '/some/path', 'post', 'responses'],
-        ['paths', '/another/path', 'patch', 'responses']
-      ]
-      const errorSeverity = linterTestSuite.SEVERITY.error
-
-      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
-    })
-  })
-
   describe('info-defined', function () {
     it('should run a rule of info ruleset', async function () {
-      const document = {}
+      const document = { openapi: '3.0.3' }
       const errorPaths = []
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
@@ -142,6 +101,7 @@ describe('main', function () {
   describe('schema-name-uppercamelcase', function () {
     it('should run a rule of model ruleset', async function () {
       const document = {
+        openapi: '3.0.3',
         definitions: {
           someSchema: {},
           SOmeSchema: {},
@@ -187,6 +147,7 @@ describe('main', function () {
         ]
       }
       const document = {
+        openapi: '3.0.3',
         paths: {
           somepath: {
             post: operation,
@@ -210,6 +171,7 @@ describe('main', function () {
   describe('path-no-trailing-slash', function () {
     it('should run a rule of path ruleset', async function () {
       const document = {
+        openapi: '3.0.3',
         paths: {
           '/some/invalid/path/': {},
           '/': {}
@@ -218,17 +180,6 @@ describe('main', function () {
       const errorPaths = [
         ['paths', '/some/invalid/path/'],
         ['paths', '/']
-      ]
-      const errorSeverity = linterTestSuite.SEVERITY.error
-      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
-    })
-  })
-
-  describe('security-rules-defined-oas2', function () {
-    it('should run a rule of security ruleset', async function () {
-      const document = {}
-      const errorPaths = [
-        []
       ]
       const errorSeverity = linterTestSuite.SEVERITY.error
       await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)

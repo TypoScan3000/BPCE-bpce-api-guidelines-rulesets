@@ -15,14 +15,26 @@
 #
 
 extends:
-  - oas-ruleset.yaml
-  - [spectral:oas, off] 
-  - info-ruleset.yaml
-  - basepath-ruleset.yaml
-  - path-ruleset.yaml
-  - http-method-ruleset.yaml
-  - http-status-code-ruleset.yaml
-  - parameter-ruleset.yaml
-  - model-ruleset.yaml
-  - model-response-ruleset.yaml
-  - security-ruleset.yaml
+  - ./oas-ruleset.yaml
+  - ./info-ruleset.yaml
+  - ./datatypes-ruleset.yaml
+  - ./basepath-ruleset.yaml
+  - ./path-ruleset.yaml
+  - ./http-method-ruleset.yaml
+  - ./http-status-code-ruleset.yaml
+  - ./parameter-ruleset.yaml
+  - ./model-ruleset.yaml
+  - ./model-response-ruleset.yaml
+  - ./security-ruleset.yaml
+
+rules:
+  oas3-schema: error
+  oas2-schema: error
+  operation-operationId: error
+  operation-operationId-unique: error
+  operation-operationId-valid-in-url: error
+  operation-parameters: error
+  operation-success-response: error
+  path-params: error
+  duplicated-entry-in-enum: error
+  typed-enum: error

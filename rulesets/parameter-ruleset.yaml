@@ -13,16 +13,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: [oas2, oas3]
+
+aliases:
+  PathParameters:
+    - $.paths.*.*.parameters[?( @ && @.in === 'path' )]
+    - $.paths.*.parameters[?( @ && @.in === 'path' )]
+  QueryParameters:
+    - $.paths.*.*.parameters[?( @ && @.in === 'query' )]
+    - $.paths.*.parameters[?( @ && @.in === 'query' )]
+  HeaderParameters:
+    - $.paths.*.*.parameters[?( @ && @.in === 'header' )]
+    - $.paths.*.parameters[?( @ && @.in === 'header' )]
 
 rules:
-
   parameter-query-forbidden-on-post-put-patch-delete:
     recommended: true
-    description: Query parameter allowed only on get, cannot be used on post, put, patch or delete
-    message: '{{description}} ({{path}})'
+    description: Query parameter is allowed only on GET, cannot be used on POST, PUT, PATCH or DELETE
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - query parameter
+    extensions:
+      since: 2024-01-01
+      justification: "."
+      tags:
+        - parameter
+        - query
     given: $.paths.*.[?(@property == 'post' || @property === 'put' || @property === 'patch' || @property === 'delete')].parameters.*
     then:
       - field: in
@@ -31,13 +46,17 @@ rules:
           notMatch: "^query$"
 
   parameter-body-forbidden-on-get-delete-oas2:
-    formats: ['oas2']
+    formats: ["oas2"]
     recommended: true
-    description: Body parameter allowed only on post, patch and put and cannot be used on get or delete
-    message: '{{description}} ({{path}})'
+    description: Body parameter must not be used on GET or DELETE.
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - body parameter
+    extensions:
+      since: 2024-01-01
+      justification: "As per HTTP specification, Body is not allowed on GET or DELETE. It is allowed only on POST, PATCH and PUT methods."
+      tags:
+        - parameter
+        - body
     given: $.paths.*.[?(@property == 'get' || @property === 'delete')].parameters.*
     then:
       - field: in
@@ -46,13 +65,17 @@ rules:
           notMatch: "^body$"
 
   parameter-body-forbidden-on-get-delete-oas3:
-    formats: ['oas3']
+    formats: ["oas3"]
     recommended: true
-    description: Body parameter allowed only on post, patch and put and cannot be used on get or delete
-    message: '{{description}} ({{path}})'
+    description: Body parameter must not be used on GET or DELETE.
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - body parameter
+    extensions:
+      since: 2024-01-01
+      justification: "As per HTTP specification, Body is not allowed on GET or DELETE. It is allowed only on POST, PATCH and PUT methods."
+      tags:
+        - parameter
+        - body
     given: $.paths.*.[?(@property == 'get' || @property === 'delete')]
     then:
       - field: requestBody
@@ -61,11 +84,15 @@ rules:
   parameter-body-is-an-object:
     recommended: true
     description: A JSON body parameter must be an object
-    message: '{{description}} ({{path}})'
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - body parameter
-    given: 
+    extensions:
+      since: 2024-01-01
+      justification: "This is done to protect future backward-compatible extensions, as an array or atomic type is closed by design."
+      tags:
+        - parameter
+        - query
+    given:
       - $.paths.*.*.parameters[?(@.in === 'body')]
       - $.paths.*.*.requestBody.content.'application/json'
     then:
@@ -76,7 +103,6 @@ rules:
         functionOptions:
           # Pay attention! It's a JSON Schema of the expected Schema (Inception!)
           schema:
-            $schema: "http://json-schema.org/draft-04/schema#"
             type: object
             properties:
               type:
@@ -86,12 +112,16 @@ rules:
 
   parameter-body-required-properties-on-post-put:
     recommended: true
-    description: A post/put body without any required property is suspicious (but it can be normal)
-    message: '{{description}} ({{path}})'
+    description: A POST/PUT body without any required property is suspicious but it can be normal.
+    message: "{{description}} ({{path}})"
     severity: warn
-    tags:
-      - body parameter
-    given: 
+    extensions:
+      since: 2024-01-01
+      justification: "Strictly optional body structures do not provide any guidance to developers on how to populate a minimal, yet valid body structure. This slows down integration."
+      tags:
+        - parameter
+        - body
+    given:
       - $.paths.*.[?(@property == 'post' || @property === 'put')].parameters[?(@.in === 'body')].schema
       - $.paths.*.[?(@property == 'post' || @property === 'put')].requestBody.content.'application/json'.schema
     then:
@@ -105,32 +135,36 @@ rules:
   parameter-query-path-body-name-lowercamelcase:
     recommended: true
     description: Path, query and body parameter name must be in lowerCamelCase
-    message: 'PROPERTY: {{property}}, ERROR: {{error}}, DESCRIPTION: {{description}}'
-    given: 
+    severity: error
+    extensions:
+      since: 2024-01-01
+      justification: "To provide consistent naming of parameters regardless of their exact location."
+      tags:
+        - parameter
+        - style
+    message: "PROPERTY: {{property}}, ERROR: {{error}}, DESCRIPTION: {{description}}"
+    given:
       - $.paths.*.*.parameters[?( @.in === 'query' || @.in === 'body' || @.in === 'path' )].name
       - $.paths.*.parameters[?( @.in === 'query' || @.in === 'body' || @.in === 'path' )].name
-    severity: error
-    tags:
-      - query parameter
-      - path parameter
-      - body parameter
     then:
-        - function: pattern
-          functionOptions:
-            match: "^[a-z0-9]+([A-Z][a-z0-9]*)*$"
+      - function: pattern
+        functionOptions:
+          match: "^[a-z0-9]+([A-Z][a-z0-9]*)*$"
 
   parameter-query-path-body-name-no-number:
     recommended: true
     description: Parameter name should not contain numbers
-    message: '{{description}} ({{path}})'
-    given: 
+    severity: warn
+    extensions:
+      since: 2024-01-01
+      justification: "Explicit business terms do not require using numbers."
+      tags:
+        - parameter
+        - style
+    message: "{{description}} ({{path}})"
+    given:
       - $.paths.*.*.parameters[?( @.in === 'query' || @.in === 'body' || @.in === 'path' )].name
       - $.paths.*.parameters[?( @.in === 'query' || @.in === 'body' || @.in === 'path' )].name
-    severity: warn
-    tags:
-      - query parameter
-      - path parameter
-      - body parameter
     then:
       - function: pattern
         functionOptions:
@@ -139,91 +173,455 @@ rules:
   parameter-path-name-not-id:
     recommended: true
     description: Path parameter name cannot be just id, it should be "<resource name>Id".
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.paths.*.*.parameters[?( @.in === 'path' )].name
-      - $.paths.*.parameters[?( @.in === 'path' )].name
+    message: "{{description}} ({{path}})"
     severity: warn
-    tags:
-      - path parameter
+    extensions:
+      since: 2024-01-01
+      justification: "Using excessively generic terms like id increases the chance of mixing identifiers in complex situations."
+      tags:
+        - parameter
+        - path
+        - style
+    given: "#PathParameters.name"
     then:
       - function: pattern
         functionOptions:
           notMatch: "/^id$/i"
 
+  parameter-query-sort-name:
+    recommended: true
+    description: Sort Query parameter must be named sort".
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2025-07-09
+      justification: "For style consistency, The sort query param is standardized."
+      tags:
+        - parameter
+        - query
+        - style
+    given: "#QueryParameters.name"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "^(orderBy|order|sortBy)$"
+
+  parameter-query-sort-schema:
+    recommended: true
+    description: Sort Query parameter must be declared as array with style form.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2025-07-09
+      justification: "For style consistency, The sort query param is standardized. It is an array of string (to support multisort), and uses a simple +/- prefix notation for each attribute to sort."
+      tags:
+        - parameter
+        - query
+        - style
+    given:
+      - $.paths.*.*.parameters[?( @ && @.in === 'query' && @.name === 'sort')]
+      - $.paths.*.parameters[?( @ && @.in === 'query' && @.name === 'sort')]
+    then:
+      # The sort parameter must be declared as optional
+      - field: required
+        function: falsy
+      # the style attribute must be equal to 'form'
+      - field: style
+        function: pattern
+        functionOptions:
+          match: 'form'
+      - field: schema
+        function: schema
+        functionOptions:
+          schema:
+            # Pay attention! It's a JSON Schema of the expected Schema
+            type: object
+            required:
+              - type
+              - items
+            properties:
+              type:
+                type: string
+                enum:
+                    - array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - string
+                  pattern:
+                    type: string
+                  example:
+                    type: string
+                    pattern: '^([+\\-])?[a-zA-Z]+$'
+                required:
+                  - type
+                  - pattern
+                  - example
+
+  parameter-query-or-path-not-object:
+    recommended: true
+    description: Query or Path parameter must not be of type object.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2025-11-19
+      justification: "While query and path parameters declared as objects are theoretically allowed by the OpenAPI specification, we have encountered many issues where such cases are unsupported by API tools."
+      tags:
+        - parameter
+        - path
+        - query
+        - type
+    given:
+      - "#PathParameters.schema"
+      - "#QueryParameters.schema"
+    then:
+      - field: type
+        function: pattern
+        functionOptions:
+          notMatch: "object"
+
+  parameter-not-iban:
+    recommended: true
+    description: IBAN is a sensitive field and must not be passed as a path or query parameter.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-09-17
+      justification: "Sensitive fields must never be passed in path or query parameters to avoid being exposed to potential hackers."
+      tags:
+        - parameter
+        - path
+        - query
+        - security
+    given:
+      - "#PathParameters"
+      - "#QueryParameters"
+    then:
+      - field: name
+        function: pattern
+        functionOptions:
+          notMatch: "(I|i)ban$"
+
+  parameter-not-gdpr-sensitive:
+    recommended: true
+    description: A GDPR sensitive field must not be passed as a path or query parameter.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2025-07-30
+      justification: "GDPR Sensitive fields like firstName, lastName, familyName, dateOfBirth, socialSecurity must never be passed in path or query parameters to avoid being exposed to potential hackers."
+      tags:
+        - parameter
+        - path
+        - query
+        - security
+        - gdpr
+        - privacy
+    given:
+      - "#PathParameters"
+      - "#QueryParameters"
+    then:
+      - field: name
+        function: pattern
+        functionOptions:
+          notMatch: "/(firstName|lastName|familyName|birthDate|dateOfBirth|socialSecurity|socialSecurityNumber|ssn)/i"
+
+  parameter-example-not-iban:
+    recommended: true
+    description: IBAN is a sensitive field and must never appear in a path or query parameter.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-09-17
+      justification: "Sensitive fields must never be passed in path or query parameters to avoid being exposed to potential hackers."
+      tags:
+        - parameter
+        - path
+        - query
+        - security
+    given:
+      - "#PathParameters"
+      - "#QueryParameters"
+    then:
+      - field: example
+        function: pattern
+        functionOptions:
+          notMatch: "FR[0-9]{25}"
+
+  parameter-path-pattern-protected:
+    recommended: true
+    description: Path parameter must be protected with a URL-safe pattern.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-07-10
+      justification: "Path parameters must be URL-safe, so a pattern is required to block unwanted characters."
+      tags:
+        - parameter
+        - path
+        - style
+        - security
+    given:
+      - '$.paths..parameters[?(@ && @.in === "path" && !@.schema)]'
+      - "#PathParameters.schema"
+    then:
+      - field: pattern
+        function: defined
+
   parameter-query-not-required:
     recommended: true
     description: Required query parameter may be a sign of a missing resource and path parameter in path, if not it should be made optional with a default value if it is possible.
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.paths.*.*.parameters[?( @.in === 'query' )].required
-      - $.paths.*.parameters[?( @.in === 'query' )].required
-    tags:
-      - query parameter
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2024-01-01
+      justification: "Required parameter situations are considered unusual. This rule serves to trap such cases for review."
+      tags:
+        - parameter
+        - query
+    given: "#QueryParameters.required"
     then:
       - function: falsy
-  
+
+  parameter-query-pagination-type:
+    recommended: true
+    description: pageSize/pageNumber parameter must be typed as integer/int32.
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2025-07-09
+      justification: "The pageSize/pageNumber query parameter is a standardized pagination parameter and must be typed as an integer"
+      tags:
+        - parameter
+        - query
+        - type
+    given:
+      - $.paths.*.*.parameters[?( @ && @.in === 'query' && @.name === 'pageSize')]
+      - $.paths.*.parameters[?( @ && @.in === 'query' && @.name === 'pageSize')]
+      - $.paths.*.*.parameters[?( @ && @.in === 'query' && @.name === 'pageNumber')]
+      - $.paths.*.parameters[?( @ && @.in === 'query' && @.name === 'pageNumber')]
+    then:
+      - function: schema
+        functionOptions:
+          schema:
+            type: object
+            oneOf:
+              - properties:
+                  schema:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - integer
+                      format:
+                        type: string
+                        enum:
+                          - int32
+                    required:
+                      - type
+                      - format
+                required:
+                  - schema
+              - properties:
+                  type:
+                    type: string
+                    enum:
+                      - integer
+                  format:
+                    type: string
+                    enum:
+                      - int32
+                required:
+                  - type
+                  - format
+
+  parameter-query-param-on-collection:
+    recommended: true
+    description: A GET on a collection without any query parameter is suspicious. Should at least include pagination.
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2025-11-10
+      justification: "GET operations on Collections are supposed to be paginated, which requires at least one or two query params. If no query parameter is detected, this rule triggers a warning."
+      tags:
+        - parameter
+        - query
+        - pagination
+    # When examining the parameters of a GET on a collection,
+    # We expect to find at least one parameter for pagination, so we complain if there is none.
+    given: "$.paths[?(/(s|i?es|ves)$/i.test(@property))].get"
+    then:
+      - field: parameters
+        function: length
+        functionOptions:
+          min: 1
+
   parameter-path-required:
     recommended: true
-    description: According to OpenAPI 3 and Swagger 2 specification, a path parameter must be required.
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.paths.*.*.parameters[?( @.in === 'path' )]
-      - $.paths.*.parameters[?( @.in === 'path' )]
+    description: Path parameter must be declared as required.
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - path parameter
+    extensions:
+      since: 2024-01-01
+      justification: "According to OpenAPI 3 and Swagger 2 specification, a path parameter must be declared as required."
+      tags:
+        - parameter
+        - path
+        - integrity
+    given: "#PathParameters"
     then:
       - field: required
         function: truthy
 
   parameter-header-check-with-reviewer:
     recommended: true
-    description: As using HTTP headers (even authorized ones) is unusual, their use must be checked with an API Design Reviewer. Consistency with returned headers must be checked too.
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.paths.*.*.parameters.*.in
-      - $.paths.*.parameters.*.in
+    description: As using HTTP headers, even authorized ones, is unusual, their use must be checked with an API Design Reviewer. Consistency with returned headers must be checked too.
+    message: "{{description}} ({{path}})"
     severity: hint
-    tags:
-      - header parameter
+    extensions:
+      since: 2024-01-01
+      justification: "For consistency, Headers should be standardized at group level."
+      tags:
+        - parameter
+        - header
+        - consistency
+    given: "#HeaderParameters"
     then:
-      - function: pattern
-        functionOptions:
-          notMatch: "header"
+      - function: falsy
 
   parameter-header-name-case:
     recommended: true
     description: Header parameter names must be in Hyphened-Pascal-Case.
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.paths.*.*.parameters[?( @.in === 'header' )].name
-      - $.paths.*.parameters[?( @.in === 'header' )].name
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - header parameter
+    extensions:
+      since: 2024-01-01
+      justification: "Style consistency."
+      tags:
+        - parameter
+        - header
+        - consistency
+        - style
+    given: "#HeaderParameters.name"
     then:
-      - function: casing
+      - function: pattern
         functionOptions:
-          type: pascal
-          separator:
-            char: "-"
+          match: "^([A-Z]{1,4}[a-z]*(-)?)*$"
 
   parameter-header-authorized-name:
     recommended: true
-    description: Custom HTTP header are not authorized and only a subset of standard HTTP headers are allowed.
-    message: '{{description}} ({{path}})'
-    given: 
-      - $.paths.*.*.parameters[?( @.in === 'header' )].name
-      - $.paths.*.parameters[?( @.in === 'header' )].name
     severity: error
-    tags:
-      - header parameter
+    description: Custom HTTP header are not authorized and only a subset of standard HTTP headers are allowed.
+    message: "{{description}} ({{path}})"
+    extensions:
+      since: 2024-01-01
+      justification: "Style consistency."
+      tags:
+        - parameter
+        - header
+        - consistency
+        - style
+    given:
+      - "#HeaderParameters.name"
+      - $.paths.*.*.responses.*.headers.*~
     then:
       - function: enumeration
         functionOptions:
           values:
-            - Accept
             - Accept-Datetime
             - Accept-Language
-    
+            - Access-Control-Allow-Origin
+            - Cache-Control
+            - Content-Language
+            - Content-Security-Policy
+            - Deprecation
+            - ETag
+            - If-Match
+            - If-Modified-Since
+            - If-None-Match
+            - If-Unmodified-Since
+            - Last-Modified
+            - Location
+            - Origin
+            - Prefer
+            - Preference-Applied
+            - RateLimit
+            - RateLimit-Policy
+            - Retry-After
+            - Strict-Transport-Security
+            - Sunset
+            - WWW-Authenticate
+            - X-Content-Type-Options
+            - X-CorrelationID
+            - X-Frame-Options
+            - X-HTTP-Method-Override
+            - X-StepUp-Token
+
+  parameter-header-pattern-protected:
+    recommended: true
+    description: Header parameter requires pattern for a type string or maxItems if type array".
+    message: "{{description}} ({{path}})"
+    severity: error
+    extensions:
+      since: 2024-07-10
+      justification: "Header parameters may contain sensitive contents that a gateway or other sensitive components may have to interpret, so a pattern for a string or a max items for an array is required for protection."
+      tags:
+        - parameter
+        - path
+        - style
+        - security
+    given:
+      - '$.paths..parameters[?(@ && @.in === "header" && !@.schema)]'
+      - "#HeaderParameters.schema"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          oneOf:
+            - properties:
+                type:
+                  type: string
+                  enum:
+                    - string
+                pattern:
+                  type: string
+              required:
+                - type
+                - pattern
+            - properties:
+                type:
+                  type: string
+                  enum:
+                    - array
+                maxItems:
+                  type: integer
+              required:
+                - type
+                - maxItems
+
+  parameter-header-definition-to-ignored:
+    recommended: true
+    description: Header parameters named "Accept", "Content-Type" or "Authorization" definition shall be ignored as defined in the OpenAPI Specification.
+    message: "{{description}} ({{path}})"
+    severity: warn
+    extensions:
+      since: 2025-09-05
+      justification: "To ensure compliance with the OpenAPI Specification."
+      tags:
+        - parameter
+        - path
+        - style
+        - compliance
+    given:
+      - '$.paths..parameters[?(@ && @.in === "header" && !@.schema)]'
+      - "#HeaderParameters.schema"
+    then:
+      - field: name
+        function: pattern
+        functionOptions:
+          notMatch: "^(Accept|Content-Type|Authorization)$"

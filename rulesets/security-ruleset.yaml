@@ -15,15 +15,43 @@
 #
 
 # TODO write tests
+formats: [oas2, oas3]
+
+extends:
+  - ./owasp-extended-ruleset.mjs
+  - ./security-custom-ruleset.mjs
 
 rules:
+  owasp:api4:2023-rate-limit-responses-429: off
+  owasp:api4:2023-rate-limit-retry-after: off
+  owasp:api4:2023-rate-limit: off
+  owasp:api9:2023-inventory-access: off
+  owasp:api8:2023-define-error-validation: off
+  owasp:api4:2023-string-limit: warn
+  owasp:api4:2023-array-limit: warn
+  owasp:api4:2023-string-restricted: warn
+  owasp:api8:2023-define-cors-origin: off
+  # Redundant with datatypes-incorrect-integer-format
+  owasp:api4:2023-integer-format: off
+  # Redundant with http response bpce rules
+  owasp:api8:2023-define-error-responses-401: off
+  owasp:api8:2023-define-error-responses-500: off
+  owasp:api2:2023-jwt-best-practices: off
+  owasp:api4:2023-integer-limit-legacy: warn
+  # The next two rules are redundant with the integrated spectral rule oas3-operation-security-defined
+  #  owasp:api2:2023-write-restricted: off
+  #  owasp:api2:2023-read-restricted: off
+
   security-rules-defined-oas2:
     formats: ["oas2"]
     recommended: true
     description: Security definitions must be defined
     severity: error
-    tags:
-      - security
+    extensions:
+      since: 2024-01-01
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
     given: $
     then:
       field: securityDefinitions
@@ -34,14 +62,16 @@ rules:
     recommended: true
     description: Security schemes must be defined
     severity: error
-    tags:
-      - security
+    extensions:
+      since: 2024-01-01
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
     given: $
     then:
       function: schema
       functionOptions:
         schema:
-          $schema: "http://json-schema.org/draft-07/schema#"
           additionalProperties: true
           required:
             - components
@@ -56,11 +86,14 @@ rules:
 
   security-types-authorized:
     recommended: true
-    description: Only apiKey and oauth security definitions are allowed
+    description: Only oauth security definitions are allowed on public APIs
     severity: error
-    tags:
-      - security
-    given: 
+    extensions:
+      since: 2024-01-01
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
+    given:
       - $.securityDefinitions.*
       - $.components.securitySchemes.*
     then:
@@ -68,16 +101,34 @@ rules:
       function: enumeration
       functionOptions:
         values:
-          - apiKey
           - oauth2
+
+  security-oauth2-types-authorized:
+    recommended: true
+    description: "OAuth2 Implicit scheme is deprecated - Use AuthorizationCode with PKCE or Client Credentials."
+    severity: warn
+    extensions:
+      since: 2024-10-14
+      justification: "OAuth2 implicit scheme is deprecated since 2020 - Use AuthorizationCode with PKCE or Client Credentials."
+      tags:
+        - security
+    given:
+      - $.securityDefinitions[?(@.type==='oauth2')]
+      - $.components.securitySchemes[?(@.type==='oauth2')].flows
+    then:
+      field: implicit
+      function: falsy
 
   security-definitions-oauth-scopes-defined:
     recommended: true
     description: Scopes must be defined for all Oauth2 security definitions
     severity: error
-    tags:
-      - security
-    given: 
+    extensions:
+      since: 2024-01-01
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
+    given:
       - $.securityDefinitions[?(@.type==='oauth2')]
       - $.components.securitySchemes[?(@.type==='oauth2')].flows.*
     then:
@@ -90,24 +141,30 @@ rules:
 
   security-no-api-level:
     recommended: true
-    description: API level security is forbidden (must be configured at operation level)
+    description: API level security is forbidden - it must be configured at operation level
     severity: error
-    tags:
-      - security
+    extensions:
+      since: 2024-01-01
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
     given: $
     then:
       field: security
       function: falsy
-  
+
   security-operation-defined:
     recommended: true
     description: Security must be defined on each operation
     message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - security
+    extensions:
+      since: 2024-01-01
+      justification: "All APIS must be properly secured."
+      tags:
+        - security
     # selects everything that is not a HTTP method in a path
-    given: $.paths.*[?(!(/(parameters|^x-)/.test(@property)))] 
+    given: $.paths.*[?(!(/(parameters|^x-)/.test(@property)))]
     then:
       - field: security
         function: truthy

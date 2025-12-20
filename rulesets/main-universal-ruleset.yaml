@@ -1,0 +1,108 @@
+﻿#
+# Copyright 2019-2022 Groupe BPCE
+#
+# Licensed under the Apache License, Version 2.0 (the License);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an AS IS BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+extends:
+  - ./main-ruleset.yaml
+  - ./extensions-ruleset.yaml
+
+rules:
+  # These Spectral rules are here to protect the integrity of an OAS contract and must be preserved at error level.
+  oas3-schema: error
+  oas2-schema: error
+  operation-operationId: error
+  operation-operationId-unique: error
+  operation-operationId-valid-in-url: error
+  operation-parameters: error
+  operation-success-response: error
+  path-params: error
+  duplicated-entry-in-enum: error
+  typed-enum: error
+
+  # The rules below have been downgraded from error to warn, but this could be challenged -
+  # we may decide collectively that we want to keep a uniform approach for all APIs on these
+  response-error-schema-is-valid: warn
+  response-schema-is-defined-oas3: warn
+  response-schema-is-defined-oas2: warn
+  response-schema-is-an-object: warn
+  response-collection-schema-is-valid: warn
+  response-collection-page-schema-is-valid: warn
+  response-schema-is-not-defined-for-204-or-3xx: warn
+  parameter-body-is-an-object: warn
+  datatypes-missing-number-format: warn
+  datatypes-incorrect-string-format: warn
+
+  # These are custom rules that should not be blocking in a general context
+  info-description-provided: warn
+  info-name-not-contain-api: warn
+  info-version: warn
+
+  basepath-version-not-in-path: warn
+  basepath-valid-structure: warn
+  basepath-no-api: warn
+  basepath-not-in-path: warn
+  basepath-lowerCamelCased: warn
+
+  path-valid-structure: warn
+  path-lower-camel-case: warn
+
+  extensions-authorized: warn
+
+  property-name-lowercamelcase: warn
+  property-name-no-technical-prefix-suffix: warn
+  schema-name-uppercamelcase: warn
+  schema-name-no-technical-prefix-suffix: warn
+  schema-no-type-declaration: warn
+  datatypes-boolean-must-begin-with-is: warn
+  datatypes-datetimetype-must-end-with-datetime: warn
+  datatypes-datetype-must-end-with-date: warn
+  datatypes-datetype-must-have-date-format: warn
+  datatypes-boolean-must-not-end-with-indicator: warn
+  datatypes-missing-integer-format: warn
+
+  parameter-path-pattern-protected: warn
+  parameter-header-name-case: warn
+  parameter-header-pattern-protected: warn
+  parameter-header-authorized-name: warn
+  parameter-body-forbidden-on-get-delete-oas2: warn
+  parameter-query-path-body-name-lowercamelcase: warn
+  parameter-query-forbidden-on-post-put-patch-delete: warn
+
+  http-method-post-only-on-search: warn
+  http-status-code-get: warn
+  http-status-code-post: warn
+  http-status-code-put: warn
+  http-status-code-delete: warn
+  http-status-code-post-search: warn
+  http-status-code-post-unusual-200: warn
+  http-status-code-mandatory-401: warn
+  http-status-code-mandatory-500: warn
+  http-status-code-400-operation-level-query-body-header-param: warn
+  http-status-code-404-when-path-parameters: warn
+  http-status-code-no-404-when-no-path-parameters: warn
+  http-status-code-get-no-400-on-unitary-resource: warn
+
+  request-support-json-oas3: warn
+
+  ## Security rules downgraded - to double check with V.F
+  ## We might have a different strategy where security exceptions have to be cleared with local CESM
+  owasp:api2:2023-short-lived-access-tokens: warn
+  owasp:api8:2023-no-scheme-http: warn
+  owasp:api8:2023-no-server-http: warn
+  owasp:api1:2023-no-numeric-ids: warn
+  owasp:api9:2023-inventory-environment: warn
+  security-oauth2-toomany-schemes-defined-oas3: warn
+  security-types-authorized: warn
+  security-no-api-level: warn

@@ -13,9 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+formats: [oas2, oas3]
 
-#extends:
-#  - [spectral:oas, off]
+aliases:
+  Basepath:
+    - $.basePath # oas2
+    - $.servers.*.url # oas3
+
 rules:
   basepath-defined-oas2:
     formats: ["oas2"]
@@ -23,8 +27,11 @@ rules:
     description: Base path must be defined in basePath
     message: "{{description}} (#/basePath) {{path}}"
     severity: error
-    tags:
-      - basepath
+    extensions:
+      since: 2024-01-01
+      justification: "A base path has to be defined so that the try-out and production usages can operate normally."
+      tags:
+        - basepath
     given: $
     then:
       field: basePath
@@ -36,8 +43,11 @@ rules:
     description: Base path must be defined in at least a server in servers
     message: "{{description}} (#/servers)  {{path}}"
     severity: error
-    tags:
-      - basepath
+    extensions:
+      since: 2024-01-01
+      justification: "A base path has to be defined so that the try-out and production usages can operate normally."
+      tags:
+        - basepath
     given: $
     then:
       - field: servers
@@ -49,45 +59,51 @@ rules:
 
   basepath-valid-structure:
     recommended: true
-    description: Base path structure must be /apiName/version (for example /someName/v2)
-    message: '{{description}} ({{path}})'
+    description: Base path structure must end with `/apiName/version`, for example `/someName/v2`
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - basepath
-    given: 
-      - $.basePath # oas2
-      - $.servers.*.url # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "This is to ensure that versioning is global and not at the resource level."
+      tags:
+        - basepath
+        - versioning
+    given: "#Basepath"
     then:
       function: pattern
       functionOptions:
-        match: "/^(https?:\/\/[a-zA-Z0-9_.:]+)?\/[a-z0-9_-]+\/(v)[0-9]+$/i"
-  
+        match: "\/[a-z]+\/(v)[0-9]+$/i"
+
   basepath-lowerCamelCased:
     recommended: true
-    description: Base path in lowerCamelCase (for example /someName/v2)
-    message: '{{description}} ({{path}})'
+    description: Base path must be in lowerCamelCase, for example `/someName/v2`
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - basepath
-    given:
-      - $.basePath # oas2
-      - $.servers.*.url # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "Most, if not all BPCE style guides are lowerCamelCase based."
+      tags:
+        - basepath
+        - style
+    given: "#Basepath"
     then:
       function: pattern
       functionOptions:
         # added / use case to avoid having it trigger this rule
-        match: "(^\/$)|(^(https?:\/\/[a-zA-Z0-9_.:]+)?(\/[a-z0-9]+([A-Z0-9][a-z0-9]+)*)+$)"
+        # added {} to support variables in the server basepath expression
+        match: "(^\/$)|(^(https?:\/\/[a-zA-Z0-9_.:{}]+)?(\/[a-z0-9{}]+([A-Z0-9{}][a-z0-9{}]+)*)+$)"
 
   basepath-no-trailing-slash:
     recommended: true
-    description: No trailing slash on basepath
-    message: '{{description}} ({{path}})'
+    description: Basepath must not end with trailing slash
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - basepath
-    given:
-      - $.basePath # oas2
-      - $.servers.*.url # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "The OAS spec mandates that paths must start with a slash, so basepath must not end with slash. The combination would cause issues."
+      tags:
+        - basepath
+    given: "#Basepath"
     then:
       function: pattern
       functionOptions:
@@ -95,14 +111,15 @@ rules:
 
   basepath-no-api:
     recommended: true
-    description: Basepath should not contain api
-    message: '{{description}} ({{path}})'
+    description: Basepath should not contain 'api'
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - basepath
-    given:
-      - $.basePath # oas2
-      - $.servers.*.url # oas3
+    extensions:
+      since: 2024-01-01
+      justification: "There is no need to waste size in basepath by adding redundant or useless sections."
+      tags:
+        - basepath
+    given: "#Basepath"
     then:
       function: pattern
       functionOptions:
@@ -110,12 +127,16 @@ rules:
 
   basepath-not-in-path:
     recommended: true
-    description: Path must not contain base path (api name and version)
-    message: '{{description}} ({{path}})'
+    description: Path must not begin with base path elements like api name and version
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - basepath
-      - path
+    extensions:
+      since: 2024-01-01
+      justification: "This is to ensure that versioning is global and not at the resource level."
+      tags:
+        - basepath
+        - versioning
+        - path
     given: $.paths
     then:
       field: "@key"
@@ -126,11 +147,15 @@ rules:
   basepath-version-not-in-path:
     recommended: true
     description: Version must be in base path and not in path
-    message: '{{description}} ({{path}})'
+    message: "{{description}} ({{path}})"
     severity: error
-    tags:
-      - basepath
-      - path
+    extensions:
+      since: 2024-01-01
+      justification: "This is to ensure that versioning is global and not at the resource level."
+      tags:
+        - basepath
+        - versioning
+        - path
     given: $.paths
     then:
       field: "@key"

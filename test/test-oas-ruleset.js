@@ -86,5 +86,71 @@ describe('oas', function () {
     })
   })
 
+  describe('oas31-version', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.oas31, linterTestSuite.STANDARD_SPECTRAL_RULE)
+
+    it('should return no error if document is not oas31', async function () {
+      const document = {
+        openapi: '3.0.0',
+        info: {
+          version: '1.0.0',
+          title: 'title'
+        },
+        paths: {}
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return an error if document is oas31', async function () {
+      const document = {
+        openapi: '3.1.0',
+        info: {
+          version: '1.0.0',
+          title: 'title',
+          descriptionn: 'description with typo'
+        },
+        paths: {}
+      }
+      const errorPaths = [
+        []
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.error
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
+  describe('oas2-version', function () {
+    linterTestSuite.commonTests(linterTestSuite.FORMATS.oas2, linterTestSuite.STANDARD_SPECTRAL_RULE)
+
+    it('should return no error if document is not oas2', async function () {
+      const document = {
+        openapi: '3.0.0',
+        info: {
+          version: '1.0.0',
+          title: 'title'
+        },
+        paths: {}
+      }
+      await this.linterTester.runAndCheckNoError(document)
+    })
+
+    it('should return a warning if document is swagger 2', async function () {
+      const document = {
+        swagger: '2.0',
+        info: {
+          version: '1.0.0',
+          title: 'title',
+          descriptionn: 'description with typo'
+        },
+        paths: {}
+      }
+      const errorPaths = [
+        []
+      ]
+      const errorSeverity = linterTestSuite.SEVERITY.warn
+      await this.linterTester.runAndCheckExpectedError(document, errorPaths, errorSeverity)
+    })
+  })
+
   linterTestSuite.finalize()
 })
